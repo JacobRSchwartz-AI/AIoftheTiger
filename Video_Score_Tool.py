@@ -1,6 +1,9 @@
 import xlsxwriter
 import time
 import keyboard
+import os
+
+
 
 init_time = time.time()
 
@@ -9,7 +12,9 @@ filepath = "image_score.csv"
 def record_data():
     seconds = 0.0993
     woods = 0
-    total_frames = 180
+    dir = r'C:\Users\manag\PycharmProjects\AIoftheTiger\data_1'
+    list = os.listdir(dir)  # dir is your directory path
+    total_frames = len(list)
     data = [[],[]]
     print(woods)
     woods_prev = woods
@@ -32,7 +37,6 @@ def record_data():
 
 def write_to_file(filepath: str, data):
     with open(filepath, "w") as file:
-        file.write("{},{}\n".format("Tiger", init_time))
         for x in range(0,len(data[0])):
             file.write("{},{}\n".format(data[0][x],data[1][x]))
 
