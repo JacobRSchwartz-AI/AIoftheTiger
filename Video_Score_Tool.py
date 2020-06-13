@@ -20,7 +20,7 @@ def record_data(dir,ideal_seconds,woods):
     i = 0
 
 
-    while i < total_frames:
+    while i < total_frames*10:
 
 
         start_time = time.time()
