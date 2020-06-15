@@ -1,4 +1,4 @@
-import xlsxwriter
+#import xlsxwriter
 import time
 import keyboard
 import os
@@ -15,7 +15,7 @@ def record_data(dir,video,woods):
 
     fps = video.get(cv2.CAP_PROP_FPS)
     ideal_seconds = 1/(fps/3)
-    seconds = ideal_seconds - 0.00088
+    seconds = ideal_seconds
     list = os.listdir(dir)      # dir is your directory path
     total_frames = len(list)    # list of video frames
     data = [[],[]]              # Data structure is a nested list AKA list of lists
@@ -60,11 +60,14 @@ def record_data(dir,video,woods):
             data[1].append(start_time)
             i += 1
             error -= ideal_seconds
+            seconds *= 0.997
             #print("Positive correction error when i=" + str(i))
 
         elif error <= -1*ideal_seconds:
             time.sleep(abs(error))
             #print("Negative correction error when i=" + str(i))
+            seconds *= 1.003
+
 
         i += 1
     return data
@@ -85,12 +88,12 @@ def auto_write_to_file(filepath: str, dir):
 
 
 woods = 0   # Initial value of first frame
-video_file = "Tony Finau's Third Round in Three Minutes" + ".mp4"
+video_file = "Tiger Woods Bridgestone Round 2 2018" + ".mp4"
 
 #Inital Variables
 folder = video_file[:-4] + ' Folder'
-dir = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\" + folder  # Folder with frames of video we're pulling from
-video = cv2.VideoCapture("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\" + video_file) # From original video find fps
+dir = "C:\\Users\\HP\\Documents\\AIoftheTiger" + folder  # Folder with frames of video we're pulling from
+video = cv2.VideoCapture("C:\\Users\\HP\\Documents\\AIoftheTiger" + video_file) # From original video find fps
 
 automatic_manual = int(input("Enter 0 to automatically score with all 0s and 1 to manually score: "))
 
@@ -120,14 +123,14 @@ else:
 img_folder = video_file[:-4] + ' Folder'
 
 #Makes copy of folder
-src = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\" +  img_folder
-dst = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\Scored Data\\scored_" + img_folder
+src = "C:\\Users\\HP\\Documents\\AIoftheTiger" +  img_folder
+dst = "C:\\Users\\HP\\Documents\\AIoftheTiger\\Scored Data\\scored_" + img_folder
 print("Copying Data")
 shutil.copytree(src, dst)
 
 
 #Locates scores for
-loc = ("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\" + data_scores)
+loc = ("C:\\Users\\HP\\Documents\\AIoftheTiger" + data_scores)
 
 #Reads in the image score file to create a df of the binary digits.
 df = pd.read_csv(loc, header=None, index_col=False)
@@ -137,8 +140,8 @@ for label in range(0, len(df)):
     if label % round(len(df)/100) == 0:
         print(str(int(label/round(len(df)/100))) + "% done")
     img_score = df.iloc[label, 0]
-    os.rename("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\Scored Data\\scored_" + img_folder + "\\frame" + str(label+1) + '.jpg',
-              "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\Scored Data\\scored_" + img_folder + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
+    os.rename("C:\\Users\\HP\\Documents\\AIoftheTiger\\Scored Data\\scored_" + img_folder + "\\frame" + str(label+1) + '.jpg',
+              "C:\\Users\\HP\\Documents\\AIoftheTiger\\Scored Data\\scored_" + img_folder + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
 
 
 
