@@ -46,19 +46,14 @@ def video_splitter(cam, folder):
 
 
 unsplit_video_files = [
-
-                        "Tony Finau Highlights _ Round 2 _ 2018 WGC",
-                        "Tony Finau shoots 9-under 62 _ Round 3 _ Waste Management 2020",
-                        "Tony Finau shoots 10-under 62 _ Round 2 _ The American Express 2020",
-                        "Tony Finau's Highlights _ Round 3 _ Hero World Challenge 2018",
-                        "Tony Finau's Third Round in Three Minutes"
-
+                        "Tiger Woods Bridgestone Round 2 2018",
+                        "Tiger Woods Players Championship Round 1 2018"
                       ]
 
 
 for video in range(0,len(unsplit_video_files)):
     # Read the video from specified path
-    cam = cv2.VideoCapture("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\" + unsplit_video_files[video] + ".mp4")
+    cam = cv2.VideoCapture("C:\\Users\\HP\\Documents\\AIoftheTiger\\" + unsplit_video_files[video] + ".mp4")
 
     #folder for output
     folder = unsplit_video_files[video] + ' Folder'
