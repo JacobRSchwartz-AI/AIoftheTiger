@@ -1,27 +1,4 @@
-# from tkinter import Image
-# from turtle import pd
-#
-# from pandas import np
-#
-# import ae
-#
-# fp = open("/pdf-ex/downloadwin7.png","rb")
-# img = PIL.Image.open(fp)
-# img.show()
-#
-# colourImg = Image.open("test.png")
-# colourPixels = colourImg.convert("RGB")
-# colourArray = np.array(colourPixels.getdata()).reshape(colourImg.size + (3,))
-# indicesArray = np.moveaxis(np.indices(colourImg.size), 0, 2)
-# allArray = np.dstack((indicesArray, colourArray)).reshape((-1, 5))
-#
-#
-# df = pd.DataFrame(allArray, columns=["y", "x", "red","green","blue"])
 
-#
-# The Python Imaging Library
-# $Id: pilview.py 2134 2004-10-06 08:55:20Z fredrik $
-#
 from tkinter import *
 from turtle import pd
 
@@ -33,16 +10,16 @@ import pandas as pd
 from pandas import np
 
 
-class UI(Label):
-    def __init__(self, master, im):
-        if im.mode == "1":
-            # bitmap image
-            self.image = ImageTk.BitmapImage(im, foreground="white")
-            Label.__init__(self, master, image=self.image, bg="black", bd=0)
-        else:
-            # photo image
-            self.image = ImageTk.PhotoImage(im)
-            Label.__init__(self, master, image=self.image, bd=0)
+# class UI(Label):
+#     def __init__(self, master, im):
+#         if im.mode == "1":
+#             # bitmap image
+#             self.image = ImageTk.BitmapImage(im, foreground="white")
+#             Label.__init__(self, master, image=self.image, bg="black", bd=0)
+#         else:
+#             # photo image
+#             self.image = ImageTk.PhotoImage(im)
+#             Label.__init__(self, master, image=self.image, bd=0)
 #
 # script interface
 import sys
@@ -54,7 +31,7 @@ else:
     filename = sys.argv[1]
 root = Tk()
 root.title(filename)
-im = Image.open(filename)  #<--- !!! works!
+#im = Image.open(filename)  #<--- !!! works!
 
 colourImg = Image.open(filename)
 colourPixels = colourImg.convert("RGB")
@@ -65,5 +42,5 @@ allArray = np.dstack((indicesArray, colourArray)).reshape((-1, 5))
 
 df = pd.DataFrame(allArray, columns=["y", "x", "red","green","blue"])
 print(df)
-UI(root, im).pack()
-root.mainloop()
+#UI(root, im).pack()
+#root.mainloop()
