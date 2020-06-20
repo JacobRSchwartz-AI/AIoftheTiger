@@ -13,6 +13,7 @@ init_time = time.time()
 f = open("directory.txt", "r")
 path = f.read()
 
+
 #Live stream of 1s and 0s every
 def record_data(dir,video,woods):
     fps = video.get(cv2.CAP_PROP_FPS)
@@ -86,13 +87,17 @@ def auto_write_to_file(filepath: str, dir):
             file.write("{}\n".format(0))
 
 
+
 woods = 0   # Initial value of first frame
 video_file = "Harold Varner III Highlights _ Round 3 _ The Greenbrier 2018" + ".mp4"
 
-#Inital Variables
+
+#Initial Variables
 folder = video_file[:-4] + ' Folder'
+
 dir = path + folder  # Folder with frames of video we're pulling from
 video = cv2.VideoCapture(path + video_file) # From original video find fps
+
 
 automatic_manual = int(input("Enter 0 to automatically score with all 0s and 1 to manually score: "))
 
@@ -111,10 +116,10 @@ if automatic_manual == 1:
     tiger_tracker = record_data(dir, video, woods)
 
     print("Done recording data, now writing to CSV")
-    write_to_file(data_scores, tiger_tracker)
+    write_to_file(path + data_scores, tiger_tracker)
 else:
     print("Now auto-scoring")
-    auto_write_to_file(data_scores, dir)
+    auto_write_to_file(path + data_scores, dir)
 
 
 
@@ -122,6 +127,7 @@ else:
 img_folder = video_file[:-4] + ' Folder'
 
 #Makes copy of folder
+
 src = path +  img_folder
 dst = path + "Scored Data\\scored_" + img_folder
 print("Copying Data")
@@ -142,6 +148,7 @@ except FileExistsError:
 
 
 
+
 #Locates scores for
 loc = (path + data_scores)
 
@@ -153,8 +160,10 @@ for label in range(0, len(df)):
     if label % round(len(df)/100) == 0:
         print(str(int(label/round(len(df)/100))) + "% done")
     img_score = df.iloc[label, 0]
+
     os.rename(dst + "\\frame" + str(label+1) + '.jpg',
               dst + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
+
 
 
 
