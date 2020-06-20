@@ -3,8 +3,11 @@ import youtube_dl
 
 ydl_opts = {}
 
-all_vids = ["https://www.youtube.com/watch?v=d6zm0pFnFgk",
-            "https://www.youtube.com/watch?v=uWngIqTI1aA"
+all_vids = ["https://www.youtube.com/watch?v=HK_Z2stfZ7s",
+            "https://www.youtube.com/watch?v=k6Nm2ITIl4o",
+            "https://www.youtube.com/watch?v=jqGg6VPBIS0",
+            "https://www.youtube.com/watch?v=AszF5_Xflx0",
+            "https://www.youtube.com/watch?v=7e1mkKymbzU"
             ]
 
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:

@@ -2,9 +2,8 @@
 import cv2
 import os
 
-#Set directory equal to a path variable
-file = open("directory.txt", "r")
-path = file.read()
+f = open("directory.txt", "r")
+path = f.read()
 
 def video_splitter(cam, folder):
     try:
@@ -49,14 +48,16 @@ def video_splitter(cam, folder):
 
 
 unsplit_video_files = [
-                        "Tiger Woods Bridgestone Round 2 2018",
-                        "Tiger Woods Players Championship Round 1 2018"
+
+                    "Harold Varner III Highlights _ Round 3 _ The Greenbrier 2018",
+                    "Harold Varner III Round 3 John Deere 2018"
+
                       ]
 
 
 for video in range(0,len(unsplit_video_files)):
     # Read the video from specified path
-    cam = cv2.VideoCapture(path + "\\" + unsplit_video_files[video] + ".mp4")
+    cam = cv2.VideoCapture(path + unsplit_video_files[video] + ".mp4")
 
     #folder for output
     folder = unsplit_video_files[video] + ' Folder'

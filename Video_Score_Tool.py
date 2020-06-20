@@ -1,4 +1,4 @@
-#import xlsxwriter
+import xlsxwriter
 import time
 import keyboard
 import os
@@ -10,16 +10,14 @@ import shutil
 #When Program Starts
 init_time = time.time()
 
-#Set directory equal to a path variable
-#file = open("directory.txt", "r")
-#path = file.read()
-path = "C:\\Users\\HP\\Documents\\AI Frames"
+f = open("directory.txt", "r")
+path = f.read()
 
 
 #Live stream of 1s and 0s every
 def record_data(dir,video,woods):
-
     fps = video.get(cv2.CAP_PROP_FPS)
+    print(fps)
     ideal_seconds = 1/(fps/3)
     seconds = ideal_seconds
     list = os.listdir(dir)      # dir is your directory path
@@ -31,10 +29,7 @@ def record_data(dir,video,woods):
     error = 0
     i = 0
 
-
     while i < total_frames:
-
-
         start_time = time.time()
 
         #appends woods and start_time to  the beginning of the list.
@@ -44,15 +39,14 @@ def record_data(dir,video,woods):
         if i > 0:
             error += (data[1][i] - data[1][i-1] - ideal_seconds)
 
-
-        #If a change has occurred print the updated value of woods and reset equality
+        # If a change has occurred print the updated value of woods and reset equality
         if woods_prev != woods:
             print(woods)
             woods_prev = woods
 
         #On button  press change the stream of outgoing 0s to 1s and change 1s to 0s.
         elif keyboard.is_pressed("S"):
-            woods = (woods+1)%2
+            woods = (woods+1) % 2
 
         #Loop designed to slow the program down to 10 iterations per second.
         while True:
@@ -66,14 +60,13 @@ def record_data(dir,video,woods):
             data[1].append(start_time)
             i += 1
             error -= ideal_seconds
-            seconds *= 0.997
+            seconds = seconds*0.998
             #print("Positive correction error when i=" + str(i))
 
         elif error <= -1*ideal_seconds:
             time.sleep(abs(error))
             #print("Negative correction error when i=" + str(i))
-            seconds *= 1.003
-
+            seconds = seconds*1.002
 
         i += 1
     return data
@@ -85,6 +78,7 @@ def write_to_file(filepath: str, data):
         for x in range(0,len(data[0])):
             file.write("{},{}\n".format(data[0][x],data[1][x]))
 
+
 def auto_write_to_file(filepath: str, dir):
     with open(filepath, "w") as file:
         for x in range(0, len(os.listdir(dir))):
@@ -93,13 +87,17 @@ def auto_write_to_file(filepath: str, dir):
             file.write("{}\n".format(0))
 
 
-woods = 1   # Initial value of first frame
-video_file = "Tiger Woods Bridgestone Round 2 2018" + ".mp4"
+
+woods = 0   # Initial value of first frame
+video_file = "Harold Varner III Highlights _ Round 3 _ The Greenbrier 2018" + ".mp4"
+
 
 #Initial Variables
 folder = video_file[:-4] + ' Folder'
-dir = path + "\\" + folder  # Folder with frames of video we're pulling from
-video = cv2.VideoCapture(path + "\\" + video_file) # From original video find fps
+
+dir = path + folder  # Folder with frames of video we're pulling from
+video = cv2.VideoCapture(path + video_file) # From original video find fps
+
 
 automatic_manual = int(input("Enter 0 to automatically score with all 0s and 1 to manually score: "))
 
@@ -129,9 +127,24 @@ else:
 img_folder = video_file[:-4] + ' Folder'
 
 #Makes copy of folder
-src = path + img_folder
-dst = path + img_folder
+
+src = path +  img_folder
+dst = path + "Scored Data\\scored_" + img_folder
 print("Copying Data")
+
+try:
+    shutil.copytree(src, dst)
+except FileExistsError:
+    print("Folder " + dst + " already exists")
+    decision = int(input("Enter 0 to overwrite and 1 to keep additional scored copies: "))
+    if decision == 0:
+        shutil.rmtree(dst)
+        shutil.copytree(src, dst)
+        print("Overwriting Data")
+    else:
+        dst += str(2)
+        shutil.copytree(src, dst)
+        print("Copying Data")
 
 
 
@@ -147,8 +160,10 @@ for label in range(0, len(df)):
     if label % round(len(df)/100) == 0:
         print(str(int(label/round(len(df)/100))) + "% done")
     img_score = df.iloc[label, 0]
-    os.rename(path + "\\Scored Data\\scored_" + img_folder + "\\frame" + str(label+1) + '.jpg',
-              path + "\\Scored Data\\scored_" + img_folder + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
+
+    os.rename(dst + "\\frame" + str(label+1) + '.jpg',
+              dst + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
+
 
 
 
