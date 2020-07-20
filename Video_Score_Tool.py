@@ -86,78 +86,97 @@ def auto_write_to_file(filepath: str, dir):
             file.write("{}\n".format(0))
 
 
-woods = 0   # Initial value of first frame
-video_file = "KetoPizza" + ".MOV"
+video_files = [
 
-#Inital Variables
-folder = video_file[:-4] + ' Folder'
-dir = path + folder  # Folder with frames of video we're pulling from
-video = cv2.VideoCapture(path + video_file) # From original video find fps
+                    "Brooks Koepkas highlights Round 1 3M",
+                    "Brooks Koepka's highlights _ Round 2 _ TOUR Championship 2019-FwG4GzJjC8s",
+                    "Bryson DeChambeau Rocket Mortgage Classic",
+                    "Dustin Johnson WGCMexico",
+                    "Jon Rahm shoots 7-under 65 _ Round 3 _ Farmers 2020-ASvCXGI4ark",
+                    "Jordan Spieth's winning highlights from 2017 AT&T Pebble Beach Pro-Am-PTXpmjlI3yg",
+                    "Justin Thomas' Winning Highlights From The 2020 Sentry Tournament of Champions-z_lzGbUKhmY",
+                    "Patrick Reed wins the 2020 WGC-Mexico Championship _ Extended Highlights-vQwSVE7gjBM",
+                    "Phil Mickelson shoots 5-under 67 _ Round 3 _ AT&T Pebble Beach 2020-rDk2vx45_CQ",
+                    "Phil Mickelson shoots 7-under 63 _ Round 2 _ Travelers Championship 2020-KW4xetuxjqY",
+                    "Rickie Fowlers BMW Championship",
+                    "Rory McIlroy shoots 7-under 63 _ Round 2 _ Charles Schwab Challenge-MIe8lPGqxIU",
+                    "Rory McIlroy's winning highlights from TOUR Championship 2019-jSS-_Iu0Qkw",
 
-automatic_manual = int(input("Enter 0 to automatically score with all 0s and 1 to manually score: "))
+                      ]
+for video in range(0,len(video_files)):
+    woods = 1   # Initial value of first frame
+    video_file = video_files[video] + ".mp4"
 
-#Output file of scores
-data_scores = video_file[:-4] + " Data.csv"
+    #Inital Variables
+    folder = video_file[:-4] + ' Folder'
+    dir = path + folder  # Folder with frames of video we're pulling from
+    video = cv2.VideoCapture(path + video_file) # From original video find fps
 
-if automatic_manual == 1:
-    # Start of execution, allows for 3 seconds from starting this program to starting a video to score.
-    print("On your marks")
-    time.sleep(1)
-    print("Get Ready")
-    time.sleep(1)
-    print("Get Set")
-    time.sleep(1)
-    print("Go!")
-    tiger_tracker = record_data(dir, video, woods)
+    automatic_manual = int(input("Enter 0 to automatically score with all 0s and 1 to manually score: "))
+    #automatic_manual = 0
 
-    print("Done recording data, now writing to CSV")
-    write_to_file(data_scores, tiger_tracker)
-else:
-    print("Now auto-scoring")
-    auto_write_to_file(data_scores, dir)
+    #Output file of scores
+    data_scores = video_file[:-4] + " Data.csv"
 
+    if automatic_manual == 1:
+        # Start of execution, allows for 3 seconds from starting this program to starting a video to score.
+        print("On your marks")
+        time.sleep(1)
+        print("Get Ready")
+        time.sleep(1)
+        print("Get Set")
+        time.sleep(1)
+        print("Go!")
+        tiger_tracker = record_data(dir, video, woods)
 
-
-#Folder that contains Split out images
-img_folder = video_file[:-4] + ' Folder'
-
-#Makes copy of folder
-src = path +  img_folder
-dst = path + "Scored Data\\scored_" + img_folder
-print("Copying Data")
-
-try:
-    shutil.copytree(src, dst)
-except FileExistsError:
-    print("Folder " + dst + " already exists")
-    decision = int(input("Enter 0 to overwrite and 1 to keep additional scored copies: "))
-    if decision == 0:
-        shutil.rmtree(dst)
-        shutil.copytree(src, dst)
-        print("Overwriting Data")
+        print("Done recording data, now writing to CSV")
+        write_to_file(data_scores, tiger_tracker)
     else:
-        dst += str(2)
+        print("Now auto-scoring")
+        auto_write_to_file(data_scores, dir)
+
+
+
+    #Folder that contains Split out images
+    img_folder = video_file[:-4] + ' Folder'
+
+    #Makes copy of folder
+    src = path +  img_folder
+    dst = path + "Scored Data\\scored_" + img_folder
+    print("Copying Data")
+
+    try:
         shutil.copytree(src, dst)
-        print("Copying Data")
+    except FileExistsError:
+        print("Folder " + dst + " already exists")
+        decision = int(input("Enter 0 to overwrite and 1 to keep additional scored copies: "))
+        if decision == 0:
+            shutil.rmtree(dst)
+            shutil.copytree(src, dst)
+            print("Overwriting Data")
+        else:
+            dst += str(2)
+            shutil.copytree(src, dst)
+            print("Copying Data")
 
 
 
-#Locates scores for
-loc = (path + data_scores)
+    #Locates scores for
+    loc = (path + data_scores)
 
-#Reads in the image score file to create a df of the binary digits.
-df = pd.read_csv(loc, header=None, index_col=False)
+    #Reads in the image score file to create a df of the binary digits.
+    df = pd.read_csv(loc, header=None, index_col=False)
 
-#For each score, attach it to the end of the name of the frame its associated with.
-for label in range(0, len(df)):
-    if label % round(len(df)/100) == 0:
-        print(str(int(label/round(len(df)/100))) + "% done")
-    img_score = df.iloc[label, 0]
-    os.rename(dst + "\\frame" + str(label+1) + '.jpg',
-              dst + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
+    #For each score, attach it to the end of the name of the frame its associated with.
+    for label in range(0, len(df)):
+        if label % round(len(df)/100) == 0:
+            print(str(int(label/round(len(df)/100))) + "% done")
+        img_score = df.iloc[label, 0]
+        os.rename(dst + "\\frame" + str(label+1) + '.jpg',
+                dst + "\\" + str(label+1) + "_frame_" + str(img_score) + '.jpg')
 
 
-reaction_time_fixer(dst, 256, 144)
+    reaction_time_fixer(dst, 256, 144)
 
 end_time = time.time()
 

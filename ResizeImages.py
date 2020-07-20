@@ -9,12 +9,12 @@ def resizeImage(basewidth, baseheight, frame_path):
     img = img.resize((basewidth, baseheight), PIL.Image.ANTIALIAS)
     img.save(frame_path)
 
-f = open("directory.txt", "r")
-path = f.read()
+# f = open("directory.txt", "r")
+# path = f.read()
 
-folder_name = path + "\\Test"
-folder = os.listdir(folder_name)
+# folder_name = path + "\\Test"
+# folder = os.listdir(folder_name)
 
-for frame in range(0, len(folder)):
-    frame_path = folder_name + "\\" + folder[frame]
-    resizeImage(256, 144, frame_path)
+# for frame in range(0, len(folder)):
+#     frame_path = folder_name + "\\" + folder[frame]
+#     resizeImage(256, 144, frame_path)
