@@ -2,8 +2,8 @@
 import cv2
 import os
 
-f = open("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\directory.txt", "r")
-path = f.read()
+# f = open("directory.txt", "r")
+# path = f.read()
 
 def video_splitter(cam, folder):
     try:
@@ -26,14 +26,15 @@ def video_splitter(cam, folder):
 
         if ret:
             # if video is still left continue creating images
-            name = './' + folder + '/frame' + str(int(1+currentframe/3)) + '.jpg'
-
+            name = folder + "\\" + "frame" + str(int(1+currentframe/3)) + ".jpg"
+            
             if currentframe % 3 == 0:
                 if currentframe % 300 == 0:
                     os.system('cls')
                     print('Creating...' + name)
                 # writing the extracted images
                 cv2.imwrite(name, frame)
+                
 
             # increasing counter so that it will
             # show how many frames are created
@@ -47,18 +48,18 @@ def video_splitter(cam, folder):
     cv2.destroyAllWindows()
 
 
-unsplit_video_files = [
+# unsplit_video_files = [
 
-                    "KetoPizza",
+#                     "KetoPizza",
 
-                      ]
+#                       ]
 
 
-for video in range(0,len(unsplit_video_files)):
-    # Read the video from specified path
-    cam = cv2.VideoCapture(path + unsplit_video_files[video] + ".MOV")
+# for video in range(0,len(unsplit_video_files)):
+#     # Read the video from specified path
+#     cam = cv2.VideoCapture(path + unsplit_video_files[video] + ".MOV")
 
-    #folder for output
-    folder = unsplit_video_files[video] + ' Folder'
+#     #folder for output
+#     folder = unsplit_video_files[video] + ' Folder'
 
-    video_splitter(cam, folder)
+#     video_splitter(cam, folder)
