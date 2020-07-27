@@ -1,9 +1,0 @@
-Image==1.5.32
-
-opencv-python~=4.2.0.34
-numpy~=1.18.5
-Pillow~=7.1.2
-keyboard~=0.13.5
-pandas~=1.0.4
-
-tensorflow==2.2.0
