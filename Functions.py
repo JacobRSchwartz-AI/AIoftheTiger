@@ -5,6 +5,7 @@ import cv2
 import shutil
 import pandas as pd
 import PIL
+import string
 
 def sorted_alphanumeric(data):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
@@ -200,3 +201,54 @@ def resizeImage(basewidth, baseheight, frame_path):
     hsize = int((float(img.size[1]) * float(wpercent)))
     img = img.resize((basewidth, baseheight), PIL.Image.ANTIALIAS)
     img.save(frame_path)
+
+def video_splitter(cam, folder):
+    try:
+
+        # creating a folder named folder
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        # if not created then raise error
+    except OSError:
+        print('Error: Creating directory of data')
+
+    # frame
+    currentframe = 0
+
+    while True:
+
+        # reading from frame
+        ret, frame = cam.read()
+
+        if ret:
+            # if video is still left continue creating images
+            name = folder + "\\" + "frame" + str(int(1+currentframe/3)) + ".jpg"
+
+            if currentframe % 3 == 0:
+                if currentframe % 300 == 0:
+                    os.system('cls')
+                    print('Creating...' + name)
+                # writing the extracted images
+                cv2.imwrite(name, frame)
+
+            # increasing counter so that it will
+            # show how many frames are created
+            currentframe += 1
+
+        else:
+            break
+
+    # Release all space and windows once done
+    cam.release()
+    cv2.destroyAllWindows()
+
+def data_augmenter(folder):
+    scored_data_folder = os.listdir(folder)
+
+    for image in range(0,len(scored_data_folder)):
+        imageSource = folder + "\\" + scored_data_folder[image]            
+        img = cv2.imread(imageSource)
+        vertical_img = img.copy()
+        vertical_img = cv2.flip(img, 1)
+        cv2.imwrite(folder + "\\flip_" + scored_data_folder[image], vertical_img)
