@@ -3,7 +3,7 @@ import re
 import numpy as np
 import cv2
 import pandas as pd
-import Functions
+from Functions import sorted_alphanumeric, data_augmenter
 
 
 def go_back(key_press):
@@ -16,7 +16,7 @@ def go_back(key_press):
 f = open("directory.txt", "r")
 path = f.read()
 
-csv_file = "Tiger_Woods_Chip_Shot_16th_Hole_2005_US_Masters-vDCGGMv50EQCSV" + ".csv"
+csv_file = "Xander_Schauffele_Final_Round_Winning_Highlights___2018_WGC_-_HSBC_Champions-QOCRj9sB4q0" + "CSV.csv"
 csv_path = path + "CSV\\\\" + csv_file
 
 images_to_show = pd.read_csv(csv_path, header=None, index_col=False)
@@ -66,4 +66,4 @@ for scored_image in range(0,len(images_to_show)):
 
 
 os.rename(path + "Scored Data\\\\" + csv_file[:-7] + " Folder", path + "Scored Data\\\\scored_" + csv_file[:-7] + " Folder")
-data_augmenter("scored_" + csv_file[:-7] + " Folder")
+data_augmenter(path + "Scored Data\\\\scored_" + csv_file[:-7] + " Folder")

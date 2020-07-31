@@ -6,6 +6,7 @@ import shutil
 import pandas as pd
 import PIL
 import string
+from PIL import Image
 
 def sorted_alphanumeric(data):
     convert = lambda text: int(text) if text.isdigit() else text.lower()

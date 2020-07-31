@@ -24,6 +24,13 @@ DOC_SCOPE = ['https://www.googleapis.com/auth/documents']
 CLIENTSECRET = 'credentials.json'
 APPNAME = 'Drive API Python Quickstart'
 
+def prepare_ocr():
+    creds = get_credentials()
+    drive_service = build('drive', 'v3', credentials=creds)
+    doc_service = build('docs', 'v1', credentials=creds)
+    return creds, drive_service, doc_service
+
+
 
 def get_credentials():
     creds = None
@@ -48,19 +55,20 @@ def get_credentials():
 
 
 # need to get picture uploaded to the google drive, open with google docs and grab this info above (automate this process)
-def upload_to_drive(path, filename):
+def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=None):
     # # uploads a file to the root folder of the google drive
     # file_id = deprecated_drive_service.upload_file('Test1IMG', 'C:\\Users\\HP\\Documents\\AI Frames\\TW3.jpg', "root",
     #                                  mime_type='image/jpeg')
     #
     # print(file_id)
 
+    if creds  == None:
+        # get the credentials to access this application
+        creds = get_credentials()
 
-    # get the credentials to access this application
-    creds = get_credentials()
-
-    # create object to access google drive
-    drive_service = build('drive', 'v3', credentials=creds)
+    if drive_service == None:
+        # create object to access google drive
+        drive_service = build('drive', 'v3', credentials=creds)
 
     # File's new metadata.
     mime_type = 'application/vnd.google-apps.document'
@@ -83,10 +91,11 @@ def upload_to_drive(path, filename):
 
     # print('File ID: %s' % file["id"])
 
-    # create an object to access google docs
-    doc_service = build('docs', 'v1', credentials=creds)
+    if doc_service == None:
+        # create an object to access google docs
+        doc_service = build('docs', 'v1', credentials=creds)
 
-   # store the doc object we are trying to access
+    #store the doc object we are trying to access
     document = doc_service.documents().get(documentId=file['id']).execute()
 
     text_str = ''
@@ -99,22 +108,31 @@ def upload_to_drive(path, filename):
         except:
             continue
 
-
-
     drive_service.files().delete(fileId=file['id']).execute()
 
     return text_str
+
+def find_tiger(output_txt):
+    output_txt = output_txt.upper()
+    str_to_check = ["TIGER", "WOODS"]
+    for string in range(0,len(str_to_check)):
+        tiger = output_txt.find(str_to_check[string])
+        if tiger >= 0:
+            tiger = True
+            return tiger
+    return False
 
 
 # upload an image to the google drive
 # call the ocr function on google drive
 # grab the text and decipher if it contains "tiger woods" and similar phrases
-def main():
-    filename = 'frame837'
-    path = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\Scored Data\\scored_Harold Varner III Highlights _ Round 3 _ The Greenbrier 2018 Folder\\" + filename + '.jpg'
-    output_txt = upload_to_drive(path, filename)
-    print(output_txt)
+def main_ocr(path, filename, creds=None, drive_service=None, doc_service=None):
+    # filename = 'frame50444'
+    # path = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\2008_U.S._Open_Final_Round_Full_Telecast-Vvi_LtvptKs Folder\\" + filename + '.jpg'
+    output_txt = upload_to_drive(path, filename, creds, drive_service, doc_service)
+    tiger = find_tiger(output_txt)
+    return tiger
 
 
 if __name__ == '__main__':
-    main()
+    main_ocr("a","b")
