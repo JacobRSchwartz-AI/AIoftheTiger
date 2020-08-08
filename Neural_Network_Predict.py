@@ -13,18 +13,18 @@ import concurrent.futures
 from Functions import sorted_alphanumeric, resizeImage
 from OCR import main_ocr, prepare_ocr
 
+
 # Method to get our Neural Network to only run our OCR tool on images
 # that we want to see
 def image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None, doc_service=None):
-
     # make a copy of the image of interest and resize it for
     # use in our Neural Network
     shutil.copyfile(test_img_path, test_img_path[:-4] + "_NN.jpg")
-    resizeImage(256,144,test_img_path)
+    resizeImage(256, 144, test_img_path)
     test_img = cv2.imread(test_img_path)
 
     # convert image to pixel values and standardize them
-    test_img_array = np.zeros((1,144,256,3), dtype='float64')
+    test_img_array = np.zeros((1, 144, 256, 3), dtype='float64')
     test_img_array[0] = test_img / 255
 
     # make our prediction of what the image is
@@ -46,6 +46,7 @@ def image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None
 
     return tiger, score_prediction, prediction_array
 
+
 if __name__ == "__main__":
 
     # change the directory to match the correct directory that we will be
@@ -60,7 +61,7 @@ if __name__ == "__main__":
         shutil.rmtree(path + "Live Test Subset")
     shutil.copytree(path + "Live Test Subset - Copy", path + "Live Test Subset")
 
-    # test_img_path = path + "Test Data\\\\" + "scored_TW BMW Round 1 2018 Folder\\\\" + "117_frame_2.jpg" 
+    # test_img_path = path + "Test Data\\\\" + "scored_TW BMW Round 1 2018 Folder\\\\" + "117_frame_2.jpg"
 
     # defines the model we use for our Neural Network
     my_model = path + "RE-test-model-030.h5"
@@ -70,12 +71,12 @@ if __name__ == "__main__":
     creds, drive_service, doc_service = prepare_ocr()
 
     # defines which folder we want to run the image analyzer on
-    test_folder_path = path + "Test Data\\\\REscored_Phil Mickelson shoots 5-under 67 _ Round 3 _ AT&T Pebble Beach 2020-rDk2vx45_CQ Folder\\\\" 
+    test_folder_path = path + "Test Data\\\\REscored_Phil Mickelson shoots 5-under 67 _ Round 3 _ AT&T Pebble Beach 2020-rDk2vx45_CQ Folder\\\\"
     test_folder = os.listdir(test_folder_path)
     test_folder = sorted_alphanumeric(test_folder)
 
     # Runs the image analyzer on all images in the folder
-    for image in range(0,len(test_folder)):
+    for image in range(0, len(test_folder)):
         test_img_path = test_folder_path + test_folder[image]
         # result = image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None, doc_service=None)
         if test_folder[image][-5] == "N":
@@ -129,24 +130,20 @@ if __name__ == "__main__":
     #         print(str(e))
     #         print(len(test_folder_model))
     #     # print("Chris Webber don't call timeout!")
-        
 
     # # for image in range(0,len(test_folder)):
     # #     image_analyzer(test_folder[image])
 
-
     # end_time = time.time()
-        # image += round((end_time-start_time)*10)
+    # image += round((end_time-start_time)*10)
 
     # print(end_time-start_time)
-        
 
-        # if str(score_prediction) != test_folder[image][-5]:
-        #     print(test_folder[image])
-        #     print(prediction_array)
-        #     print(score_prediction)
-        #     print('\n')
-        #     wrong_counter += 1
+    # if str(score_prediction) != test_folder[image][-5]:
+    #     print(test_folder[image])
+    #     print(prediction_array)
+    #     print(score_prediction)
+    #     print('\n')
+    #     wrong_counter += 1
 
     # print(str(1-(wrong_counter/len(test_folder))))
-

@@ -7,7 +7,6 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from oauth2client import tools
 
-
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\\HP\\Documents\\AIoftheTiger\\credentials (1).json"
 
 try:
@@ -23,6 +22,7 @@ SCOPES = 'https://www.googleapis.com/auth/drive'
 DOC_SCOPE = ['https://www.googleapis.com/auth/documents']
 CLIENTSECRET = 'credentials.json'
 APPNAME = 'Drive API Python Quickstart'
+
 
 # Method to prepare the OCR tool by:
 # Getting the credentials,
@@ -69,7 +69,7 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
     #
     # print(file_id)
 
-    if creds  == None:
+    if creds == None:
         # get the credentials to access this application
         creds = get_credentials()
 
@@ -102,7 +102,7 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
         # create an object to access google docs
         doc_service = build('docs', 'v1', credentials=creds)
 
-    #store the doc object we are trying to access
+    # store the doc object we are trying to access
     document = doc_service.documents().get(documentId=file['id']).execute()
 
     text_str = ''
@@ -111,20 +111,20 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
     for x in range(0, len(document.get('body').get('content'))):
         try:
             # print('{}'.format(document.get('body').get('content')[x]['paragraph']['elements'][0]['textRun']['content']))
-            text_str += '{}'.format(document.get('body').get('content')[x]['paragraph']['elements'][0]['textRun']['content'])
+            text_str += '{}'.format(
+                document.get('body').get('content')[x]['paragraph']['elements'][0]['textRun']['content'])
         except:
             continue
 
     drive_service.files().delete(fileId=file['id']).execute()
 
-    
-
     return text_str
+
 
 def find_tiger(output_txt):
     output_txt = output_txt.upper()
     str_to_check = ["WOODS", "TIGER"]
-    for string in range(0,len(str_to_check)):
+    for string in range(0, len(str_to_check)):
         tiger = output_txt.find(str_to_check[string])
         if tiger >= 0:
             tiger = True
@@ -142,6 +142,5 @@ def main_ocr(path, filename, creds=None, drive_service=None, doc_service=None):
     tiger = find_tiger(output_txt)
     return tiger
 
-
 # if __name__ == '__main__':
-    # main_ocr("a","b")
+# main_ocr("a","b")
