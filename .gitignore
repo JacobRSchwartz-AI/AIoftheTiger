@@ -9,4 +9,3 @@
 credentials.json
 directory.txt
 *.zip
-git rm --cached credentials.json
