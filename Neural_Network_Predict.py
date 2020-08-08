@@ -13,55 +13,68 @@ import concurrent.futures
 from Functions import sorted_alphanumeric, resizeImage
 from OCR import main_ocr, prepare_ocr
 
+# Method to get our Neural Network to only run our OCR tool on images
+# that we want to see
 def image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None, doc_service=None):
-    # global reconstructed_model
+
+    # make a copy of the image of interest and resize it for
+    # use in our Neural Network
     shutil.copyfile(test_img_path, test_img_path[:-4] + "_NN.jpg")
     resizeImage(256,144,test_img_path)
     test_img = cv2.imread(test_img_path)
+
+    # convert image to pixel values and standardize them
     test_img_array = np.zeros((1,144,256,3), dtype='float64')
     test_img_array[0] = test_img / 255
 
-    # reconstructed_model_copy = copy.deepcopy(reconstructed_model)
-
+    # make our prediction of what the image is
     prediction_array = reconstructed_model.predict(test_img_array)
     prediction_array = prediction_array[0]
 
+    # grab what the Neural Network predicts the image is showing
     result = np.where(prediction_array == np.amax(prediction_array))
     score_prediction = result[0][0] + 1
     end_time = time.time()
     tiger = False
 
-    # if score_prediction == 5:
-    #     tiger = main_ocr(test_img_path[:-4] + "_NN.jpg", test_folder[image], creds)
-    #     print(test_img_path)
-        # if tiger == True:
-        #     os.rename(test_img_path[:-4] + "_NN.jpg", test_img_path[:-4] + "_OCR_TIGER.jpg")
+    # if we want to see the image run our OCR tool
+    if score_prediction == 5:
+        tiger = main_ocr(test_img_path[:-4] + "_NN.jpg", test_folder[image], creds)
+        print(test_img_path)
+        if tiger == True:
+            os.rename(test_img_path[:-4] + "_NN.jpg", test_img_path[:-4] + "_OCR_TIGER.jpg")
 
     return tiger, score_prediction, prediction_array
 
 if __name__ == "__main__":
 
+    # change the directory to match the correct directory that we will be
+    # working out of in our terminal
     os.chdir("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger")
     f = open("directory.txt", "r")
     path = f.read()
 
+    # creates a copy of our testing data set so that we don't have to
+    # redownload a copy
     if os.path.exists(path + "Live Test Subset"):
         shutil.rmtree(path + "Live Test Subset")
     shutil.copytree(path + "Live Test Subset - Copy", path + "Live Test Subset")
 
     # test_img_path = path + "Test Data\\\\" + "scored_TW BMW Round 1 2018 Folder\\\\" + "117_frame_2.jpg" 
-    # global my_model 
-    my_model = path + "RE-test-model-030.h5"
 
-    # global reconstructed_model
+    # defines the model we use for our Neural Network
+    my_model = path + "RE-test-model-030.h5"
     reconstructed_model = tf.keras.models.load_model(my_model)
 
+    # gets all our tools to run the OCR
     creds, drive_service, doc_service = prepare_ocr()
 
+    # defines which folder we want to run the image analyzer on
     test_folder_path = path + "Test Data\\\\REscored_Phil Mickelson shoots 5-under 67 _ Round 3 _ AT&T Pebble Beach 2020-rDk2vx45_CQ Folder\\\\" 
     test_folder = os.listdir(test_folder_path)
     test_folder = sorted_alphanumeric(test_folder)
 
+    # Runs the image analyzer on all images in the folder
     for image in range(0,len(test_folder)):
         test_img_path = test_folder_path + test_folder[image]
         # result = image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None, doc_service=None)
