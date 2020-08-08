@@ -105,7 +105,7 @@ for folder in range(0,len(test_folders_list)):
 # Normalize pixel values to be between 0 and 1
 
 train_images, test_images = train_images / 255.0, test_images / 255.0
-class_names = ['Golfer-Half', 'Golfer-Full', 'Blue/Grey Background', 'Green/Yellow Background']
+class_names = ['Golfer-Half', 'Golfer-Full', 'Blue/Grey Background', 'Green/Yellow Background', 'Box top']
 
 # plt.figure(figsize=(10,10))
 # for i in range(25):
@@ -151,9 +151,13 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
 model.add(layers.Flatten())
 model.add(layers.Dense(16, activation='relu'))
-model.add(layers.Dense(4))
+model.add(layers.Dense(5))
 model.summary()
 
 # opt = tf.keras.optimizers.SGD(learning_rate=0.05, momentum=0.9)
@@ -162,9 +166,9 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-checkpoint = tf.keras.callbacks.ModelCheckpoint('test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
+checkpoint = tf.keras.callbacks.ModelCheckpoint('REre-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
 
-model.fit(train_images, train_labels, batch_size=32, epochs=18, validation_data=(test_images, test_labels), callbacks=[checkpoint])
+model.fit(train_images, train_labels, batch_size=32, epochs=36, validation_data=(test_images, test_labels), callbacks=[checkpoint])
 
 model.save("my_model")
 

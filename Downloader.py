@@ -4,25 +4,27 @@ import cv2
 import os
 import string
 import shutil
-import Functions
+from Functions import format_filename, video_splitter, image_preprocessor
 
 ydl_opts = {}
 
 f = open("directory.txt", "r")
 path = f.read()
 
-all_vids = ["https://www.youtube.com/watch?v=vDCGGMv50EQ"
+all_vids = [
+           
+            "https://www.youtube.com/watch?v=pQBwjPL6RIk"
             ]
 
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     for url in range(0,len(all_vids)):
         ydl.download([all_vids[url]])
         file_info = ydl.extract_info(all_vids[url])
-        file_name = file_info['title'] + '-' + file_info['id'] + '.mp4'
+        file_name = file_info['title'] + '-' + file_info['id'] + '.mkv'
         
         file_name = list(file_name)
         for char in range(0,len(file_name)):
-            if file_name[char] == "|":
+            if file_name[char] == "|" or file_name[char] == "/":
                 file_name[char] = "_" 
         file_name = "".join(file_name)  # Change the list back to string, by using 'join' method of strings. 
         
@@ -31,6 +33,7 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         valid_video_location = path + valid_file_name 
         shutil.move(video_location, valid_video_location)
 
+        # valid_video_location = path + "AT&T Pebble Beach ProAm 2018 Round 4 (1_5)-pQBwjPL6RIk.mkv"
 
         cam = cv2.VideoCapture(valid_video_location)
         #folder for output

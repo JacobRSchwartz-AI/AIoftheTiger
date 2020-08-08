@@ -42,12 +42,12 @@ def get_credentials():
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                CLIENTSECRET, SCOPES)
-            creds = flow.run_local_server(port=0)
+        # if creds and creds.expired and creds.refresh_token:
+        #     creds.refresh(Request())
+        # else:
+        flow = InstalledAppFlow.from_client_secrets_file(
+            CLIENTSECRET, SCOPES)
+        creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
@@ -110,11 +110,13 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
 
     drive_service.files().delete(fileId=file['id']).execute()
 
+    
+
     return text_str
 
 def find_tiger(output_txt):
     output_txt = output_txt.upper()
-    str_to_check = ["TIGER", "WOODS"]
+    str_to_check = ["MICKELSON", "PHIL"]
     for string in range(0,len(str_to_check)):
         tiger = output_txt.find(str_to_check[string])
         if tiger >= 0:
@@ -134,5 +136,5 @@ def main_ocr(path, filename, creds=None, drive_service=None, doc_service=None):
     return tiger
 
 
-if __name__ == '__main__':
-    main_ocr("a","b")
+# if __name__ == '__main__':
+    # main_ocr("a","b")
