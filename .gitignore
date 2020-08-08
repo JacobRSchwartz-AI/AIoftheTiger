@@ -10,3 +10,9 @@ credentials.json
 directory.txt
 requirements.txt
 *.zip
+/Scored Data
+/Test Data
+/cuda
+/.vs
+/.vscode
+*.pickle
