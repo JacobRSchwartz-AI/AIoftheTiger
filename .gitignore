@@ -8,4 +8,5 @@
 /.idea
 credentials.json
 directory.txt
+requirements.txt
 *.zip
