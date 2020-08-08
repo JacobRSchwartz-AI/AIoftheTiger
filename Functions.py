@@ -8,27 +8,40 @@ import PIL
 import string
 from PIL import Image
 
+# Method to sort an entity alpha numerically
+# numbers will appear first ordered from 0-9
+# alphabetically chars will be ordered a-z
 def sorted_alphanumeric(data):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
     return sorted(data, key=alphanum_key)
 
+# Method to write the data passed as a parameter
+# to a file specified as the other parameter to the method
 def write_to_file(filepath: str, data):
     with open(filepath, "w") as file:
         for x in range(0,len(data)):
             file.write("{}\n".format(data[x]))
 
+# Method to format the filename with only valid characters
+# that won't cause an error when reading the file names
+# from the directory
 def format_filename(s):
     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
     filename = ''.join(c for c in s if c in valid_chars)
     filename = filename.replace(' ','_') # I don't like spaces in filenames.
     return filename
 
+# Method to preprocess an folder of images by getting rid
+# of images that are too similar to each other based on
+# the results of their similarity score
 def image_preprocessor(folder):
 	f = open("directory.txt", "r")
 	path = f.read()
 	img_folder = path + "CSV\\\\" + folder
 
+# Define the path that will contain the index of the images that
+# are different based on their similarity score
 	csv_path = img_folder[:-7] + "CSV.csv"
 	print(csv_path)
 	img_folder_path = path + folder
@@ -37,6 +50,8 @@ def image_preprocessor(folder):
 
 	dst = path + "Scored Data\\" + folder
 
+# Overwrite the file containing the images with the ones that are different
+# based on their similarity score
 	try:
 		shutil.copytree(img_folder_path, dst)
 	except FileExistsError:
@@ -58,6 +73,7 @@ def image_preprocessor(folder):
 	images_to_show = [0]
 	flag = 0
 
+# Define which images to score
 	# print("Preprocessing images ")
 	while image < len(img_folder) and flag == 0:
 		file_path = img_folder_path + "\\" + img_folder[image]
@@ -92,10 +108,12 @@ def similarity_Score(image1, image2):
     error = 100*score_array.sum() / normalizer
     return error
 
+# Rename files in a folder based on the input parameters
 def rename_files_in_folder(folder, directory):
     for file in range(0,len(directory)):
         os.rename(folder + "\\" + directory[file], folder + "\\" + str(file) + directory[file][-12:])
 
+# Method to fix the human error of reaction time
 def reaction_time_fixer(folder, width, height):
     print(folder)
     dir = os.listdir(folder)
@@ -196,6 +214,7 @@ def reaction_time_fixer(folder, width, height):
         pass_num += 1
 
 
+# Method to resize an image to the size specified by the parameters
 def resizeImage(basewidth, baseheight, frame_path):
     img = Image.open(frame_path)
     wpercent = (basewidth / float(img.size[0]))
@@ -203,6 +222,8 @@ def resizeImage(basewidth, baseheight, frame_path):
     img = img.resize((basewidth, baseheight), PIL.Image.ANTIALIAS)
     img.save(frame_path)
 
+# Method to split a video clip into images and store it in the
+# directory specified
 def video_splitter(cam, folder):
     try:
 
@@ -244,6 +265,8 @@ def video_splitter(cam, folder):
     cam.release()
     cv2.destroyAllWindows()
 
+# Method to create images that have been flipped across an imaginary
+# vertical line in the middle of the image thus creating a reflection
 def data_augmenter(folder):
     scored_data_folder = os.listdir(folder)
 

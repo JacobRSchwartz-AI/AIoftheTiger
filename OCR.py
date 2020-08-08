@@ -24,6 +24,13 @@ DOC_SCOPE = ['https://www.googleapis.com/auth/documents']
 CLIENTSECRET = 'credentials.json'
 APPNAME = 'Drive API Python Quickstart'
 
+# Method to prepare the OCR tool by:
+# Getting the credentials,
+# Creating a drive_service variable to interact with the
+# Google Drive API,
+# Creating a doc_service variable to interact with the
+# Google Doc API
+# Finally Return all these for one time creation of these variables
 def prepare_ocr():
     creds = get_credentials()
     drive_service = build('drive', 'v3', credentials=creds)
@@ -31,7 +38,7 @@ def prepare_ocr():
     return creds, drive_service, doc_service
 
 
-
+# Method to get the credentials to access the Google API
 def get_credentials():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
@@ -116,7 +123,7 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
 
 def find_tiger(output_txt):
     output_txt = output_txt.upper()
-    str_to_check = ["MICKELSON", "PHIL"]
+    str_to_check = ["WOODS", "TIGER"]
     for string in range(0,len(str_to_check)):
         tiger = output_txt.find(str_to_check[string])
         if tiger >= 0:
