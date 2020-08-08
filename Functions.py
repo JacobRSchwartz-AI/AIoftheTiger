@@ -32,15 +32,14 @@ def format_filename(s):
     filename = filename.replace(' ','_') # I don't like spaces in filenames.
     return filename
 
-# Method to preprocess an folder of images by getting rid
-# of images that are too similar to each other based on
-# the results of their similarity score
+# Method to preprocess a folder of images by creating a CSV with the index 
+# of images we want to include in our dataset as the results of their similarity score
 def image_preprocessor(folder):
 	f = open("directory.txt", "r")
 	path = f.read()
 	img_folder = path + "CSV\\\\" + folder
 
-# Define the path that will contain the index of the images that
+# Define the path that will contain the CSV of indices of the images that
 # are different based on their similarity score
 	csv_path = img_folder[:-7] + "CSV.csv"
 	print(csv_path)
@@ -50,10 +49,10 @@ def image_preprocessor(folder):
 
 	dst = path + "Scored Data\\" + folder
 
-# Overwrite the file containing the images with the ones that are different
-# based on their similarity score
+# Creates copies of all of our images into another folder for some reason
 	try:
 		shutil.copytree(img_folder_path, dst)
+	#Overwrites existing files, allows for possibility of making an additional copy
 	except FileExistsError:
 		print("Folder " + dst + " already exists")
 		decision = 0
@@ -66,10 +65,12 @@ def image_preprocessor(folder):
 			dst += str(2)
 			shutil.copytree(img_folder_path, dst)
 			print("Copying Data")
-
+	
+	#Loop counter
 	image = 0
 	sim_score = 0
 	sim_score_max = [0,0]
+	#Always shows the first image
 	images_to_show = [0]
 	flag = 0
 
@@ -78,17 +79,22 @@ def image_preprocessor(folder):
 	while image < len(img_folder) and flag == 0:
 		file_path = img_folder_path + "\\" + img_folder[image]
 		img_1 = cv2.imread(file_path)
+		#Picks an image as a starting point, checks the next 50 images
 		for x in range(1,51):
 			if image + x < len(img_folder):
 				file_path_2 = img_folder_path + "\\" + img_folder[image+x]
 				img_2 = cv2.imread(file_path_2)
 				sim_score = similarity_Score(img_1,img_2)
+				#Keeps only the index of the image that is the most different from the first image
 				if sim_score > sim_score_max[0]:
 					sim_score_max[0] = sim_score
 					sim_score_max[1] = image + x
+			#Makes sure we keep the last image, signals that we are done
 			else:
 				sim_score_max[1] = len(img_folder)-1
 				flag = 1
+		#Pulls the index of the most dissimilar images.
+		#Continues the loop with that image as the base and checking the next 50 against it.
 		image = sim_score_max[1]
 		images_to_show.append(image)
 		print(str(sim_score_max[1]) + " out of " + str(len(img_folder)-1) + " complete")
@@ -115,19 +121,18 @@ def rename_files_in_folder(folder, directory):
 
 # Method to fix the human error of reaction time
 def reaction_time_fixer(folder, width, height):
-    print(folder)
+    #Prints, pulls, and orders folder
+	print(folder)
     dir = os.listdir(folder)
     dirlist = sorted_alphanumeric(dir)
     print("Resizing images in: " + folder)
+	#Resizes every frame in the folder to the 256 by 144 px that the NN model uses
     for frame in range(0,len(dirlist)):
         frame_path = folder + "\\" + dirlist[frame]
         resizeImage(width, height, frame_path)
 
-    rename_files_in_folder(folder, dirlist)
 
-    # image1 = cv2.imread(folder + "\\" + "204_frame_0.jpg")
-    # image2 = cv2.imread(folder + "\\" + "203_frame_0.jpg")
-    # print(similarity_Score(image1, image2))
+    rename_files_in_folder(folder, dirlist)
 
 
     # loop through folder and determine flip from 0 to 1
@@ -138,6 +143,7 @@ def reaction_time_fixer(folder, width, height):
     # continue looping through the folder
     # reset largest diff and second largest diff
 
+	#Allows this process to repeat indefinetly until it can no longer improve
     end_dir_len = 0
     start_dir_len = len(dirlist)
     pass_num = 1
@@ -149,6 +155,7 @@ def reaction_time_fixer(folder, width, height):
         start_dir_len = len(dirlist) 
         image1_score = 0
         image2_score = 0
+		#Loops through the list pulling the score of the images 2 at a time
         for image in range(len(dirlist) - 1):
             image1_score = str(dirlist[image][-5])
             image2_score = str(dirlist[image + 1][-5])
@@ -157,7 +164,7 @@ def reaction_time_fixer(folder, width, height):
             if image % round(len(dirlist) / 100) == 0:
                 print(str(int(image / round(len(dirlist) / 100))) + "% done")
 
-            # flip occurs here?
+            # flip occurs here, we will look back at the previous 30 frames
             if image1_score != image2_score:
                 start_frame = image
                 end_frame = start_frame - 30
@@ -165,39 +172,43 @@ def reaction_time_fixer(folder, width, height):
                 if end_frame < 0:
                     end_frame = 0
 
+				#We will be comparing the ratio of the largest_diff and second_diff
+				#If this ratio exceeds 3 then that indicates that there was a severe jump and that is most likely where the data scoring should have flipped.
                 largest_diff = 0
                 second_diff = 0
                 largest_diff_index = 0
                 score = 0
 
+				#Goes backwards from the start_frame to the end_frame 30 frames before
                 for frame in range(start_frame, end_frame, -1):
                     image1 = cv2.imread(folder + "\\" + dirlist[frame])
                     image2 = cv2.imread(folder + "\\" + dirlist[frame + 1])
-                    #print(str(dirlist[frame]))
+					#Calculates similarity score between images
                     try:
                         score = similarity_Score(image1, image2)
                         #print(str(frame) + " image 1: " + str(frame + 1) + " image 2: Score: ", score)
                     except:
                         continue
                     
+					#If these two are the most different stores it, moves down the previous largest diff, and stores the frame it occurred on.
                     if score > largest_diff:
                         second_diff = largest_diff
                         largest_diff = score
                         largest_diff_index = frame
 
+					#Second most dissimalar set of images
                     elif score > second_diff:
                         second_diff = score
 
-                #print("Largest Diff: " + str(largest_diff) + "\nSecond Diff: " + str(second_diff))
-
-                # rename all frames within
+                
+                # rename all frames between the actual flip in the dataset and the likely spot where it should have flipped
                 if largest_diff >= 3 * second_diff:
                     for i in range(start_frame, largest_diff_index, - 1):
                         file = dirlist[i]
                         label = dirlist[i][-5]
                         os.rename(folder + "\\" + file,
                                 folder + "\\" + str(i) + "_frame_" + str((int(label) + 1) % 2) + '.jpg')
-                #delete
+                #delete frames if we did not find a severe jump. This indicates a smooth camera transition and data that would not be useful
                 else:
                     for i in range(end_frame, start_frame + 1):
                         file = dirlist[i]
