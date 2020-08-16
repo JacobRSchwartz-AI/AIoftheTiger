@@ -10,3 +10,6 @@ credentials.json
 directory.txt
 requirements.txt
 *.zip
+*.pickle
+OCR_microsoft.py
+quickstart.py
