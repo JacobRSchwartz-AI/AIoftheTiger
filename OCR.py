@@ -1,10 +1,12 @@
 from __future__ import print_function
 import os
 import pickle
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import InstalledAppFlow, Flow
+import google_auth_oauthlib.flow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient import _auth
 from oauth2client import tools
 
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\\HP\\Documents\\AIoftheTiger\\credentials (1).json"
@@ -18,7 +20,7 @@ except ImportError:
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/drive-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/drive'
+SCOPES = ['https://www.googleapis.com/auth/drive']
 DOC_SCOPE = ['https://www.googleapis.com/auth/documents']
 CLIENTSECRET = 'credentials.json'
 APPNAME = 'Drive API Python Quickstart'
@@ -49,15 +51,26 @@ def get_credentials():
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
-        # if creds and creds.expired and creds.refresh_token:
-        #     creds.refresh(Request())
-        # else:
-        flow = InstalledAppFlow.from_client_secrets_file(
-            CLIENTSECRET, SCOPES)
-        creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+        if creds and creds.expired and creds.refresh_token:
+            #creds.refresh(Request())
+            _auth.refresh_credentials(creds)
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(CLIENTSECRET, SCOPES, redirect_uri='urn:ietf:wg:oauth:2.0:oob')
+
+            # Enable offline access so that you can refresh an access token without
+            # re-prompting the user for permission. Recommended for web server apps.
+            # Enable incremental authorization. Recommended as a best practice.
+            auth_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true', prompt='consent')
+
+            print('Please go to this URL: {}'.format(auth_url))
+
+            # The user will get an authorization code. This code is used to get the
+            # access token.
+            code = input('Enter the authorization code: ')
+            flow.fetch_token(code=code)
+            creds = flow.credentials
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
     return creds
 
 
@@ -123,6 +136,7 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
 
 def find_tiger(output_txt):
     output_txt = output_txt.upper()
+    # print(output_txt)
     str_to_check = ["WOODS", "TIGER"]
     for string in range(0, len(str_to_check)):
         tiger = output_txt.find(str_to_check[string])
@@ -142,5 +156,5 @@ def main_ocr(path, filename, creds=None, drive_service=None, doc_service=None):
     tiger = find_tiger(output_txt)
     return tiger
 
-# if __name__ == '__main__':
-# main_ocr("a","b")
+if __name__ == '__main__':
+    main_ocr("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\Live Test Subset\\frame3150.jpg","b.jpg")

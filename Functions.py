@@ -132,103 +132,103 @@ def reaction_time_fixer(folder, width, height):
     print(folder)
 
 
-dir = os.listdir(folder)
-dirlist = sorted_alphanumeric(dir)
-print("Resizing images in: " + folder)
-# Resizes every frame in the folder to the 256 by 144 px that the NN model uses
-for frame in range(0, len(dirlist)):
-    frame_path = folder + "\\" + dirlist[frame]
-    resizeImage(width, height, frame_path)
-
-rename_files_in_folder(folder, dirlist)
-
-# loop through folder and determine flip from 0 to 1
-# choose the frame before the flip and go back 30 using loop down below
-# if largest difference is 3x the second largest diff we need to rename frames
-# so that they reflect the flip
-# else delete all 30 we checked in the loop
-# continue looping through the folder
-# reset largest diff and second largest diff
-
-# Allows this process to repeat indefinetly until it can no longer improve
-end_dir_len = 0
-start_dir_len = len(dirlist)
-pass_num = 1
-
-while end_dir_len != start_dir_len:
-    print("Pass Number: " + str(pass_num))
     dir = os.listdir(folder)
     dirlist = sorted_alphanumeric(dir)
+    print("Resizing images in: " + folder)
+    # Resizes every frame in the folder to the 256 by 144 px that the NN model uses
+    for frame in range(0, len(dirlist)):
+        frame_path = folder + "\\" + dirlist[frame]
+        resizeImage(width, height, frame_path)
+
+    rename_files_in_folder(folder, dirlist)
+
+    # loop through folder and determine flip from 0 to 1
+    # choose the frame before the flip and go back 30 using loop down below
+    # if largest difference is 3x the second largest diff we need to rename frames
+    # so that they reflect the flip
+    # else delete all 30 we checked in the loop
+    # continue looping through the folder
+    # reset largest diff and second largest diff
+
+    # Allows this process to repeat indefinetly until it can no longer improve
+    end_dir_len = 0
     start_dir_len = len(dirlist)
-    image1_score = 0
-    image2_score = 0
-    # Loops through the list pulling the score of the images 2 at a time
-    for image in range(len(dirlist) - 1):
-        image1_score = str(dirlist[image][-5])
-        image2_score = str(dirlist[image + 1][-5])
+    pass_num = 1
 
-        # % done
-        if image % round(len(dirlist) / 100) == 0:
-            print(str(int(image / round(len(dirlist) / 100))) + "% done")
+    while end_dir_len != start_dir_len:
+        print("Pass Number: " + str(pass_num))
+        dir = os.listdir(folder)
+        dirlist = sorted_alphanumeric(dir)
+        start_dir_len = len(dirlist)
+        image1_score = 0
+        image2_score = 0
+        # Loops through the list pulling the score of the images 2 at a time
+        for image in range(len(dirlist) - 1):
+            image1_score = str(dirlist[image][-5])
+            image2_score = str(dirlist[image + 1][-5])
 
-        # flip occurs here, we will look back at the previous 30 frames
-        if image1_score != image2_score:
-            start_frame = image
-            end_frame = start_frame - 30
+            # % done
+            if image % round(len(dirlist) / 100) == 0:
+                print(str(int(image / round(len(dirlist) / 100))) + "% done")
 
-            if end_frame < 0:
-                end_frame = 0
+            # flip occurs here, we will look back at the previous 30 frames
+            if image1_score != image2_score:
+                start_frame = image
+                end_frame = start_frame - 30
 
-            # We will be comparing the ratio of the largest_diff and second_diff
-            # If this ratio exceeds 3 then that indicates that there was a severe jump and that is most likely where the data scoring should have flipped.
-            largest_diff = 0
-            second_diff = 0
-            largest_diff_index = 0
-            score = 0
+                if end_frame < 0:
+                    end_frame = 0
 
-            # Goes backwards from the start_frame to the end_frame 30 frames before
-            for frame in range(start_frame, end_frame, -1):
-                image1 = cv2.imread(folder + "\\" + dirlist[frame])
-                image2 = cv2.imread(folder + "\\" + dirlist[frame + 1])
-                # Calculates similarity score between images
-                try:
-                    score = similarity_Score(image1, image2)
-                    # print(str(frame) + " image 1: " + str(frame + 1) + " image 2: Score: ", score)
-                except:
-                    continue
+                # We will be comparing the ratio of the largest_diff and second_diff
+                # If this ratio exceeds 3 then that indicates that there was a severe jump and that is most likely where the data scoring should have flipped.
+                largest_diff = 0
+                second_diff = 0
+                largest_diff_index = 0
+                score = 0
 
-                # If these two are the most different stores it, moves down the previous largest diff, and stores the frame it occurred on.
-                if score > largest_diff:
-                    second_diff = largest_diff
-                    largest_diff = score
-                    largest_diff_index = frame
-
-                # Second most dissimalar set of images
-                elif score > second_diff:
-                    second_diff = score
-
-            # rename all frames between the actual flip in the dataset and the likely spot where it should have flipped
-            if largest_diff >= 3 * second_diff:
-                for i in range(start_frame, largest_diff_index, - 1):
-                    file = dirlist[i]
-                    label = dirlist[i][-5]
-                    os.rename(folder + "\\" + file,
-                              folder + "\\" + str(i) + "_frame_" + str((int(label) + 1) % 2) + '.jpg')
-            # delete frames if we did not find a severe jump. This indicates a smooth camera transition and data that would not be useful
-            else:
-                for i in range(end_frame, start_frame + 1):
-                    file = dirlist[i]
+                # Goes backwards from the start_frame to the end_frame 30 frames before
+                for frame in range(start_frame, end_frame, -1):
+                    image1 = cv2.imread(folder + "\\" + dirlist[frame])
+                    image2 = cv2.imread(folder + "\\" + dirlist[frame + 1])
+                    # Calculates similarity score between images
                     try:
-                        os.remove(folder + "\\" + file)
+                        score = similarity_Score(image1, image2)
+                        # print(str(frame) + " image 1: " + str(frame + 1) + " image 2: Score: ", score)
                     except:
                         continue
 
-    dir = os.listdir(folder)
-    dirlist = sorted_alphanumeric(dir)
-    rename_files_in_folder(folder, dirlist)
-    end_dir_len = len(dirlist)
-    print(len(dirlist))
-    pass_num += 1
+                    # If these two are the most different stores it, moves down the previous largest diff, and stores the frame it occurred on.
+                    if score > largest_diff:
+                        second_diff = largest_diff
+                        largest_diff = score
+                        largest_diff_index = frame
+
+                    # Second most dissimalar set of images
+                    elif score > second_diff:
+                        second_diff = score
+
+                # rename all frames between the actual flip in the dataset and the likely spot where it should have flipped
+                if largest_diff >= 3 * second_diff:
+                    for i in range(start_frame, largest_diff_index, - 1):
+                        file = dirlist[i]
+                        label = dirlist[i][-5]
+                        os.rename(folder + "\\" + file,
+                                folder + "\\" + str(i) + "_frame_" + str((int(label) + 1) % 2) + '.jpg')
+                # delete frames if we did not find a severe jump. This indicates a smooth camera transition and data that would not be useful
+                else:
+                    for i in range(end_frame, start_frame + 1):
+                        file = dirlist[i]
+                        try:
+                            os.remove(folder + "\\" + file)
+                        except:
+                            continue
+
+        dir = os.listdir(folder)
+        dirlist = sorted_alphanumeric(dir)
+        rename_files_in_folder(folder, dirlist)
+        end_dir_len = len(dirlist)
+        print(len(dirlist))
+        pass_num += 1
 
 
 # Method to resize an image to the size specified by the parameters
@@ -237,6 +237,7 @@ def resizeImage(basewidth, baseheight, frame_path):
     wpercent = (basewidth / float(img.size[0]))
     hsize = int((float(img.size[1]) * float(wpercent)))
     img = img.resize((basewidth, baseheight), PIL.Image.ANTIALIAS)
+    img = img.convert('RGB')
     img.save(frame_path)
 
 

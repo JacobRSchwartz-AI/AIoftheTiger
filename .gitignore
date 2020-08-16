@@ -16,3 +16,5 @@ requirements.txt
 /.vs
 /.vscode
 *.pickle
+client.py
+*.log
