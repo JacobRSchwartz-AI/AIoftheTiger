@@ -9,14 +9,17 @@ import keras
 import shutil
 import time
 import copy
+import threading
 import concurrent.futures
+from queue import Queue
 from Functions import sorted_alphanumeric, resizeImage
 from OCR import main_ocr, prepare_ocr
+from Screenshot_Tool import screenshot_from_url
 
 
 # Method to get our Neural Network to only run our OCR tool on images
 # that we want to see
-def image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None, doc_service=None):
+def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, drive_service=None, doc_service=None, driver=None):
     # make a copy of the image of interest and resize it for
     # use in our Neural Network
     # print(test_img_path)
@@ -39,13 +42,18 @@ def image_analyzer(test_img_path, reconstructed_model, creds, drive_service=None
     tiger = False
 
     # if we want to see the image run our OCR tool
-    if score_prediction == 5:
+    if score_prediction == 5 and stop_token == True:
+        driver.execute_script('document.getElementsByTagName("video")[0].pause()')
+        stop_token = False
         tiger = main_ocr(test_img_path[:-4] + "_NN.jpg", "googleDriveImage.jpg", creds)
         # print(test_img_path)
         # if tiger == True:
         #     os.rename(test_img_path[:-4] + "_NN.jpg", test_img_path[:-4] + "_OCR_TIGER.jpg")
+    elif score_prediction != 5 and stop_token == False:
+        stop_token = True
+    
 
-    return tiger, score_prediction
+    return tiger, score_prediction, stop_token
 
 
 if __name__ == "__main__":

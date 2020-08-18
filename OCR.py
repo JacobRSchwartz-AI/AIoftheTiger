@@ -130,7 +130,7 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
             continue
 
     drive_service.files().delete(fileId=file['id']).execute()
-
+    print(text_str)
     return text_str
 
 
