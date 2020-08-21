@@ -133,28 +133,28 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
     print(text_str)
     return text_str
 
-
-def find_tiger(output_txt):
+# golfer_list is composed of only last names
+def find_golfer(output_txt, golfer_list):
     output_txt = output_txt.upper()
-    # print(output_txt)
-    str_to_check = ["WOODS", "TIGER"]
-    for string in range(0, len(str_to_check)):
-        tiger = output_txt.find(str_to_check[string])
-        if tiger >= 0:
-            tiger = True
-            return tiger
+    for string in range(0, len(golfer_list)):
+        golfer = output_txt.find(golfer_list[string])
+        if golfer >= 0:
+            golfer = True
+            return golfer
     return False
 
 
 # upload an image to the google drive
 # call the ocr function on google drive
 # grab the text and decipher if it contains "tiger woods" and similar phrases
-def main_ocr(path, filename, creds=None, drive_service=None, doc_service=None):
+def main_ocr(path, filename, golfer_list, creds=None, drive_service=None, doc_service=None):
     # filename = 'frame50444'
     # path = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\2008_U.S._Open_Final_Round_Full_Telecast-Vvi_LtvptKs Folder\\" + filename + '.jpg'
     output_txt = upload_to_drive(path, filename, creds, drive_service, doc_service)
-    tiger = find_tiger(output_txt)
-    return tiger
+    golfer = find_golfer(output_txt, golfer_list)
+    return golfer
 
 if __name__ == '__main__':
-    main_ocr("C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\Live Test Subset\\frame3150.jpg","b.jpg")
+    os.chdir("C:\\Users\\HP\\Documents\\AIoftheTiger New\\")
+    # prepare_ocr()
+    main_ocr(r"C:\Users\HP\Documents\AI Frames\TW4.png","TW4.png")
