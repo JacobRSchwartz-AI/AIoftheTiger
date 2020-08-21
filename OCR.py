@@ -137,7 +137,7 @@ def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=
 def find_tiger(output_txt):
     output_txt = output_txt.upper()
     # print(output_txt)
-    str_to_check = ["WOODS", "TIGER"]
+    str_to_check = ["WOODS"]
     for string in range(0, len(str_to_check)):
         tiger = output_txt.find(str_to_check[string])
         if tiger >= 0:

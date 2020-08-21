@@ -40,6 +40,7 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, drive_
     score_prediction = result[0][0] + 1
     # end_time = time.time()
     tiger = False
+    start_time = time.time()
 
     # if we want to see the image run our OCR tool
     if score_prediction == 5 and stop_token == True:
@@ -53,7 +54,7 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, drive_
         stop_token = True
     
 
-    return tiger, score_prediction, stop_token
+    return tiger, score_prediction, stop_token, start_time
 
 
 if __name__ == "__main__":
