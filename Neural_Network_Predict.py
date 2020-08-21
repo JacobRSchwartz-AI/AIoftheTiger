@@ -19,7 +19,7 @@ from Screenshot_Tool import screenshot_from_url
 
 # Method to get our Neural Network to only run our OCR tool on images
 # that we want to see
-def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, drive_service=None, doc_service=None, driver=None):
+def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, golfer_list, drive_service=None, doc_service=None, driver=None):
     # make a copy of the image of interest and resize it for
     # use in our Neural Network
     # print(test_img_path)
@@ -39,14 +39,15 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, drive_
     result = np.where(prediction_array == np.amax(prediction_array))
     score_prediction = result[0][0] + 1
     # end_time = time.time()
-    tiger = False
-    start_time = time.time()
+    found = False
 
+    start_time = time.time()
     # if we want to see the image run our OCR tool
     if score_prediction == 5 and stop_token == True:
         driver.execute_script('document.getElementsByTagName("video")[0].pause()')
         stop_token = False
-        tiger = main_ocr(test_img_path[:-4] + "_NN.jpg", "googleDriveImage.jpg", creds)
+        print(score_prediction)
+        found = main_ocr(test_img_path[:-4] + "_NN.jpg", "googleDriveImage.jpg", golfer_list, creds)
         # print(test_img_path)
         # if tiger == True:
         #     os.rename(test_img_path[:-4] + "_NN.jpg", test_img_path[:-4] + "_OCR_TIGER.jpg")
@@ -54,7 +55,7 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, drive_
         stop_token = True
     
 
-    return tiger, score_prediction, stop_token, start_time
+    return found, score_prediction, stop_token, start_time
 
 
 if __name__ == "__main__":
