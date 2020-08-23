@@ -3,6 +3,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from playsound import playsound
 import os
 import time
+import threading
 from OCR import prepare_ocr
 from Neural_Network_Predict import image_analyzer
 import tensorflow as tf
@@ -10,7 +11,28 @@ from Golfer_List import get_active_golfer_list
 import keyboard
 from tensorflow.keras import datasets, layers, models, optimizers, callbacks
 
-os.chdir(r"C:\Users\HP\Documents\AIoftheTiger New")
+def keyboard_monitoring(driver):
+    while True:
+        try:
+            #Checks to see if video is paused
+            paused = driver.execute_script('return document.getElementsByTagName("video")[0].paused')
+            if keyboard.is_pressed("P") and paused:
+                driver.execute_script('document.getElementsByTagName("video")[0].play()')
+                driver.execute_script('document.getElementsByTagName("video")[0].playbackRate=1')
+            elif keyboard.is_pressed("P") and not paused:
+                driver.execute_script('document.getElementsByTagName("video")[0].pause()')
+            elif keyboard.is_pressed("S"):
+                driver.execute_script('document.getElementsByTagName("video")[0].play()')
+                driver.execute_script('document.getElementsByTagName("video")[0].playbackRate=5')
+            elif keyboard.is_pressed("R"):
+                driver.execute_script('document.getElementsByTagName("video")[0].play()')
+                driver.execute_script('document.getElementsByTagName("video")[0].playbackRate=-1')
+            # time.sleep(0.25)
+        except:
+            continue
+
+
+os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 f = open("directory.txt", "r")
 path = f.read()
 
@@ -31,8 +53,9 @@ while done == False:
                    "Input '0' when you have listed all golfers you want to watch: ")
     if golfer != '0':
         # check if golfer is in active golfer list
-        if golfer.upper() in active_golfers:
-            golfer_list.append(golfer.upper())
+        golfer = golfer.upper() + '\n'
+        if golfer in active_golfers:
+            golfer_list.append(golfer[:-1])
         else:
             overwrite = input("WARNING! The golfer you entered doesn't exist in our list. Do you still want"
                               "to continue? Enter 'y' to use your golfer.")
@@ -53,7 +76,10 @@ driver.get(url)
 # driver.maximize_window()
 driver.fullscreen_window()
 
-# print(driver)
+# control_thread = threading.Thread(target=keyboard_monitoring, args=([driver]))
+# control_thread.start()
+# # print(driver)
+# print(control_thread.is_alive())
 
 fileName = "screenshot.jpg"
 stop_token = True
@@ -69,7 +95,7 @@ while True:
     except Exception as e:
         print(str(e))
     # os.system('cls')
-    # print(result[1])
+    print(result[1], lag_time)
     stop_token = result[2]
     start_time = result[3]
     if result[0]:
@@ -79,23 +105,24 @@ while True:
         while paused:
             paused = driver.execute_script('return document.getElementsByTagName("video")[0].paused')
             if keyboard.is_pressed("P") and lag_addition == 0:
-                driver.execute_script('document.getElementsByTagName("video"[0].play()')
+                driver.execute_script('document.getElementsByTagName("video")[0].play()')
                 end_time = time.time()
-                lag_time = start_time - end_time
+                lag_time = end_time - start_time
                 lag_addition = 1
-            while keyboard.is_pressed("D") != True:
-                continue
+        while keyboard.is_pressed("D") != True:
+            continue
         # time.sleep(10)
     elif result[1] == 5:
         driver.execute_script('document.getElementsByTagName("video")[0].play()')
         end_time = time.time()
         lag_time += end_time - start_time
 
-    if lag_time >= 1:
+    paused = driver.execute_script('return document.getElementsByTagName("video")[0].paused')
+    if lag_time >= 0.5 and not paused:
         current_time = time.time()
-        end_time = time.time + 1
+        end_time = time.time() + 0.5
         driver.execute_script('document.getElementsByTagName("video")[0].playbackRate=2')
         while current_time <= end_time:
             current_time = time.time()
         driver.execute_script('document.getElementsByTagName("video")[0].playbackRate=1')
-        lag_time -= 1
+        lag_time -= 0.5

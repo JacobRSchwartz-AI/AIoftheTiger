@@ -154,7 +154,7 @@ def main_ocr(path, filename, golfer_list, creds=None, drive_service=None, doc_se
     golfer = find_golfer(output_txt, golfer_list)
     return golfer
 
-if __name__ == '__main__':
-    os.chdir("C:\\Users\\HP\\Documents\\AIoftheTiger New\\")
-    # prepare_ocr()
-    main_ocr(r"C:\Users\HP\Documents\AI Frames\TW4.png","TW4.png")
+# if __name__ == '__main__':
+#     os.chdir("C:\\Users\\HP\\Documents\\AIoftheTiger New\\")
+#     # prepare_ocr()
+#     main_ocr(r"C:\Users\HP\Documents\AI Frames\TW4.png","TW4.png")
