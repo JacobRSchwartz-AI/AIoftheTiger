@@ -37,7 +37,7 @@ f = open("directory.txt", "r")
 path = f.read()
 
 # defines the model we use for our Neural Network
-my_model = path + "RE-test-model-030.h5"
+my_model = path + "3_RE-test-model-034.h5"
 reconstructed_model = tf.keras.models.load_model(my_model)
 
 # gets all our tools to run the OCR

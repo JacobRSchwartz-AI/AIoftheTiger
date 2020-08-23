@@ -156,7 +156,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 #Checkpoint to save the best model so far
-checkpoint = tf.keras.callbacks.ModelCheckpoint('REre-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
+checkpoint = tf.keras.callbacks.ModelCheckpoint('3_RE-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
 
 #Trains the model
 model.fit(train_images, train_labels, batch_size=32, epochs=36, validation_data=(test_images, test_labels), callbacks=[checkpoint])

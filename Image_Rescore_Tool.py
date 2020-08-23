@@ -12,6 +12,7 @@ def go_back(key_press):
 	else:
 		return 0
 
+os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 
 f = open("directory.txt", "r")
 path = f.read()
@@ -23,7 +24,7 @@ parent_folder = os.listdir(parent_folder)
 #For every subfolder
 for sub_folder in range(0,len(parent_folder)):
 	#If the name of the folder doesn't start with the letter R (indicating it was already rescored) then we will proceed to rescore images in that folder
-	if parent_folder[sub_folder][0] != "R":
+	if parent_folder[sub_folder][0] == "R":
 		#Puts every image from the folder into a list
 		folder_name = parent_folder[sub_folder]
 		dst = path + "Test Data\\\\" + folder_name
@@ -40,7 +41,7 @@ for sub_folder in range(0,len(parent_folder)):
 		while image < len(folder)/2:
 			file_path = dst + "\\" + folder[image]
 			#There was only one type of score that we potentially needed to change, if you want to rescore every image get rid of this line.
-			if folder[image][-5] == "2":
+			if folder[image][-5] != "2" and folder[image][-5] != "5":
 				#Reads in rgb values of the file
 				img_1 = cv2.imread(file_path)
 				#Displays the image to the user
@@ -90,4 +91,4 @@ for sub_folder in range(0,len(parent_folder)):
 				os.remove(file_path)
 
 		#Renames folder itself to have a RE in front of it.
-		os.rename(dst, path + "Test Data\\\\RE" + folder_name)
+		os.rename(dst, path + "Test Data\\\\3_" + folder_name)

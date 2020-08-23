@@ -47,7 +47,7 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, golfer
         driver.execute_script('document.getElementsByTagName("video")[0].pause()')
         stop_token = False
         print(score_prediction)
-        found = main_ocr(test_img_path[:-4] + "_NN.jpg", "googleDriveImage.jpg", golfer_list, creds)
+        found = main_ocr(test_img_path[:-4] + "_NN.jpg", "googleDriveImage.jpg", golfer_list, creds, drive_service, doc_service)
         # print(test_img_path)
         # if tiger == True:
         #     os.rename(test_img_path[:-4] + "_NN.jpg", test_img_path[:-4] + "_OCR_TIGER.jpg")
