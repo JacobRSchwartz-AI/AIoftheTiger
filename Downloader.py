@@ -8,13 +8,20 @@ from Functions import format_filename, video_splitter, image_preprocessor
 
 ydl_opts = {}
 
+# os.chdir(r"C:\Users\HP\Documents\AIoftheTiger New\")
 f = open("directory.txt", "r")
 path = f.read()
 
 #List of all videos to download from the internet
 all_vids = [
-           
-            "https://www.youtube.com/watch?v=pQBwjPL6RIk"
+            "https://www.youtube.com/watch?v=LzG843uMM-c",
+            "https://www.youtube.com/watch?v=Z3rUeyl7Rzo",
+            "https://www.youtube.com/watch?v=rIhaiWxLJkY",
+            "https://www.youtube.com/watch?v=JXXw1T0yc60",
+            "https://www.youtube.com/watch?v=7nNcCBCsPPQ",
+            "https://www.youtube.com/watch?v=hunfoe6HLTg",
+            "https://www.youtube.com/watch?v=EAoSsJ4TNQM",
+            "https://www.youtube.com/watch?v=EXNYZZ-rRKM"
             ]
 
 #Not sure what this does, but its using the youtube_dl library the way the tutorial did
@@ -42,7 +49,7 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		# This is important because sometimes cv2 has difficulty turning a video into images if it doesn't like the name  
         valid_file_name = format_filename(file_name)
         video_location = path + file_name
-        valid_video_location = path + valid_file_namef 
+        valid_video_location = path + valid_file_name 
         shutil.move(video_location, valid_video_location)
 
 		#Read in the video into cam using cv2
