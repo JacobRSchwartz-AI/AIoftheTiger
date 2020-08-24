@@ -37,7 +37,7 @@ def keyboard_monitoring(driver):
             continue
 
 # change directory 
-os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
+os.chdir(r"C:\Users\HP\Documents\AIoftheTiger New")
 f = open("directory.txt", "r")
 path = f.read()
 
@@ -62,7 +62,7 @@ while done == False:
                    "Input '0' when you have listed all golfers you want to watch: ")
     # if not done entering golfers...
     if golfer != '0':
-        golfer = golfer.upper() + '\n'
+        golfer = golfer.upper()
         #is golfer they want to see in active golfer list?
         if golfer in active_golfers:
             golfer_list.append(golfer[:-1])
