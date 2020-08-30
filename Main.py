@@ -52,8 +52,8 @@ while done == False:
     golfer = input("Input the last name of a golfer you would like to watch. "
                    "Input '0' when you have listed all golfers you want to watch: ")
     if golfer != '0':
-        # check if golfer is in active golfer list
-        golfer = golfer.upper() + '\n'
+        golfer = golfer.upper()
+        #is golfer they want to see in active golfer list?
         if golfer in active_golfers:
             golfer_list.append(golfer[:-1])
         else:
