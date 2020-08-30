@@ -3,6 +3,7 @@ import re
 import numpy as np
 import cv2
 import shutil
+import math
 import pandas as pd
 import PIL
 import string
@@ -39,19 +40,23 @@ def format_filename(s):
 # Method to preprocess a folder of images by creating a CSV with the index
 # of images we want to include in our dataset as the results of their similarity score
 def image_preprocessor(folder):
-	f = open("directory.txt", "r")
-	path = f.read()
-	img_folder = path + "CSV\\\\" + folder
+    f = open("directory.txt", "r")
+    path = f.read()
+    img_folder = path + "CSV\\\\" + folder
 
-	# Define the path that will contain the CSV of indices of the images that
-	# are different based on their similarity score
-	csv_path = img_folder[:-7] + "CSV.csv"
-	print(csv_path)
-	dst = path + "Test Data\\" + folder
-
-	shutil.move(path + folder, path + "Test Data\\")
-	img_folder = os.listdir(dst)
-	img_folder = sorted_alphanumeric(img_folder)
+    # Define the path that will contain the CSV of indices of the images that
+    # are different based on their similarity score
+    csv_path = img_folder[:-7] + "CSV.csv"
+    print(csv_path)
+    dst = path + "Test Data\\" + folder
+    try:
+        shutil.move(path + folder, path + "Test Data\\")
+    except:
+        shutil.rmtree(path + "Test Data\\" + folder)
+        shutil.move(path + folder, path + "Test Data\\")
+        # print("Already exists ")
+    img_folder = os.listdir(dst)
+    img_folder = sorted_alphanumeric(img_folder)
 
 
     # Creates copies of all of our images into another folder for some reason
@@ -72,41 +77,41 @@ def image_preprocessor(folder):
     #         print("Copying Data")
 
     # Loop counter
-	image = 0
-	sim_score = 0
-	sim_score_max = [0, 0]
-	# Always shows the first image
-	images_to_show = [0]
-	flag = 0
+    image = 0
+    sim_score = 0
+    sim_score_max = [0, 0]
+    # Always shows the first image
+    images_to_show = [0]
+    flag = 0
 
     # Define which images to score
     # print("Preprocessing images ")
-	while image < len(img_folder) and flag == 0:
-		file_path = dst + "\\" + img_folder[image]
-		img_1 = cv2.imread(file_path)
-		# Picks an image as a starting point, checks the next 50 images
-		for x in range(1, 51):
-			if image + x < len(img_folder):
-				file_path_2 = dst + "\\" + img_folder[image + x]
-				img_2 = cv2.imread(file_path_2)
-				sim_score = similarity_Score(img_1, img_2)
-				# Keeps only the index of the image that is the most different from the first image
-				if sim_score >= sim_score_max[0]:
-					sim_score_max[0] = sim_score
-					sim_score_max[1] = image + x
-			# Makes sure we keep the last image, signals that we are done
-			else:
-				sim_score_max[1] = len(img_folder) - 1
-				flag = 1
-		# Pulls the index of the most dissimilar images.
-		# Continues the loop with that image as the base and checking the next 50 against it.
-		image = sim_score_max[1]
-		images_to_show.append(image)
-		print(str(sim_score_max[1]) + " out of " + str(len(img_folder) - 1) + " complete")
-		sim_score_max = [0, 0]
+    while image < len(img_folder) and flag == 0:
+        file_path = dst + "\\" + img_folder[image]
+        img_1 = cv2.imread(file_path)
+        # Picks an image as a starting point, checks the next 50 images
+        for x in range(1, 51):
+            if image + x < len(img_folder):
+                file_path_2 = dst + "\\" + img_folder[image + x]
+                img_2 = cv2.imread(file_path_2)
+                sim_score = similarity_Score(img_1, img_2)
+                # Keeps only the index of the image that is the most different from the first image
+                if sim_score >= sim_score_max[0]:
+                    sim_score_max[0] = sim_score
+                    sim_score_max[1] = image + x
+            # Makes sure we keep the last image, signals that we are done
+            else:
+                sim_score_max[1] = len(img_folder) - 1
+                flag = 1
+        # Pulls the index of the most dissimilar images.
+        # Continues the loop with that image as the base and checking the next 50 against it.
+        image = sim_score_max[1]
+        images_to_show.append(image)
+        print(str(sim_score_max[1]) + " out of " + str(len(img_folder) - 1) + " complete")
+        sim_score_max = [0, 0]
 
-	write_to_file(csv_path, images_to_show)
-	# shutil.rmtree(dst)
+    write_to_file(csv_path, images_to_show)
+    # shutil.rmtree(dst)
 
 
 # determines similarity score between two images
@@ -244,7 +249,7 @@ def resizeImage(basewidth, baseheight, frame_path):
 
 # Method to split a video clip into images and store it in the
 # directory specified
-def video_splitter(cam, folder):
+def video_splitter(valid_video_location, folder, start_prop):
     try:
 
         # creating a folder named folder
@@ -255,24 +260,29 @@ def video_splitter(cam, folder):
     except OSError:
         print('Error: Creating directory of data')
 
+    cam = cv2.VideoCapture(valid_video_location)
+    total_frames = cam.get(cv2.CAP_PROP_FRAME_COUNT)
     # frame
     currentframe = 0
+    starting_frame = math.floor(start_prop*total_frames)
+    ending_frame = math.floor((start_prop+0.1)*total_frames)
 
     while True:
 
         # reading from frame
         ret, frame = cam.read()
 
-        if ret < 36000:
-            # if video is still left continue creating images
-            name = folder + "\\" + "frame" + str(int(1 + currentframe / 3)) + ".jpg"
+        if ret: 
+            if currentframe >= starting_frame and currentframe < ending_frame:
+                # if video is still left continue creating images
+                name = folder + "\\" + "frame" + str(int(1 + currentframe / 3)) + ".jpg"
 
-            if currentframe % 3 == 0:
-                if currentframe % 300 == 0:
-                    os.system('cls')
-                    print('Creating...' + name)
-                # writing the extracted images
-                cv2.imwrite(name, frame)
+                if currentframe % 3 == 0:
+                    if currentframe % 300 == 0:
+                        os.system('cls')
+                        print('Creating...' + name)
+                    # writing the extracted images
+                    cv2.imwrite(name, frame)
 
             # increasing counter so that it will
             # show how many frames are created
@@ -281,7 +291,7 @@ def video_splitter(cam, folder):
         else:
             break
 
-    # Release all space and windows once done
+    
     cam.release()
     cv2.destroyAllWindows()
 
