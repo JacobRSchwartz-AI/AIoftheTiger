@@ -17,7 +17,7 @@ f = open("directory.txt", "r")
 path = f.read()
 
 #Picks a specific CSV file that has the indices of the images that we want to score
-csv_file = "Xander_Schauffele_Final_Round_Winning_Highlights___2018_WGC_-_HSBC_Champions-QOCRj9sB4q0" + "CSV.csv"
+csv_file = "2008_U.S._Open_Final_Round_-_Full_Telecast-Vvi_LtvptKs" + "CSV.csv"
 csv_path = path + "CSV\\\\" + csv_file
 
 #Dataframe that reads in the csv

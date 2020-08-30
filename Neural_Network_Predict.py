@@ -23,9 +23,11 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, golfer
     # make a copy of the image of interest and resize it for
     # use in our Neural Network
     # print(test_img_path)
-    shutil.copyfile(test_img_path, test_img_path[:-4] + "_NN.jpg")
+    shutil.copyfile(test_img_path, test_img_path[:-4] + "_OCR.jpg")
     resizeImage(256, 144, test_img_path)
     test_img = cv2.imread(test_img_path)
+    resizeImage(630, 360, test_img_path[:-4] + "_OCR.jpg")
+    
 
     # convert image to pixel values and standardize them
     test_img_array = np.zeros((1, 144, 256, 3), dtype='float64')
@@ -47,7 +49,7 @@ def image_analyzer(test_img_path, reconstructed_model, stop_token, creds, golfer
         driver.execute_script('document.getElementsByTagName("video")[0].pause()')
         stop_token = False
         print(score_prediction)
-        found = main_ocr(test_img_path[:-4] + "_NN.jpg", "googleDriveImage.jpg", golfer_list, creds, drive_service, doc_service)
+        found = main_ocr(test_img_path[:-4] + "_OCR.jpg", "googleDriveImage.jpg", golfer_list, creds, drive_service, doc_service)
         # print(test_img_path)
         # if tiger == True:
         #     os.rename(test_img_path[:-4] + "_NN.jpg", test_img_path[:-4] + "_OCR_TIGER.jpg")
