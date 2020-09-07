@@ -5,8 +5,9 @@ import os
 import string
 import shutil
 import math
+import time
 import concurrent.futures
-from Functions import format_filename, video_splitter, image_preprocessor
+from Functions import format_filename, video_splitter, image_preprocessor, write_to_file
 from moviepy.editor import VideoFileClip
 
 
@@ -19,7 +20,8 @@ path = f.read()
 #List of all videos to download from the internet
 all_vids = [
            
-            "https://www.youtube.com/watch?v=h6aUkOiKX4o"
+            "https://www.youtube.com/watch?v=Vvi_LtvptKs&ab_channel=UnitedStatesGolfAssociation%28USGA%29",
+			
             ]
 
 #Not sure what this does, but its using the youtube_dl library the way the tutorial did
@@ -70,18 +72,22 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		# print(fps)
 		# total_frames = math.floor(fps*length)
 		
-		# total_frames = cam.get(cv2.CAP_PROP_FRAME_COUNT)
+		cam = cv2.VideoCapture(valid_video_location)
+		total_frames = cam.get(cv2.CAP_PROP_FRAME_COUNT)	
+		cam.release()
+		cv2.destroyAllWindows()
 		
-		starting_proportions = [[valid_video_location, folder, 0],
-								[valid_video_location, folder, 0.1],
-								[valid_video_location, folder, 0.2],
-								[valid_video_location, folder, 0.3],
-								[valid_video_location, folder, 0.4],
-								[valid_video_location, folder, 0.5],
-								[valid_video_location, folder, 0.6],
-								[valid_video_location, folder, 0.7],
-								[valid_video_location, folder, 0.8],
-								[valid_video_location, folder, 0.9]]
+		start_time = time.time()
+		splitter_threads = [[valid_video_location, folder, 0],
+							[valid_video_location, folder, 0.1],
+							[valid_video_location, folder, 0.2],
+							[valid_video_location, folder, 0.3],
+							[valid_video_location, folder, 0.4],
+							[valid_video_location, folder, 0.5],
+							[valid_video_location, folder, 0.6],
+							[valid_video_location, folder, 0.7],
+							[valid_video_location, folder, 0.8],
+							[valid_video_location, folder, 0.9]]
 		
 
 		# video_splitter(valid_video_location, folder, starting_proportions[8])
@@ -89,16 +95,55 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 
 		try:
 			with concurrent.futures.ThreadPoolExecutor() as executor:
-				for result in executor.map(lambda p: video_splitter(*p), starting_proportions):
+				for result in executor.map(lambda p: video_splitter(*p), splitter_threads):
 					continue
 					# print(test_folder_model[0])
 		except Exception as e:
 			print(str(e))
 
-		#Initializes a new name of a folder that does not contain the entire path because the entire path is added in the function itself.
+		
 		folder = valid_file_name[:-4] + ' Folder'
+		#Initializes a new name of a folder that does not contain the entire path because the entire path is added in the function itself.
+		try:
+			shutil.move(path + folder, path + "Test Data\\")
+		except:
+			shutil.rmtree(path + "Test Data\\" + folder)
+			shutil.move(path + folder, path + "Test Data\\")
+		
+
+
+		preprocess_threads = [[folder, 0],
+							[folder, 0.1],
+							[folder, 0.2],
+							[folder, 0.3],
+							[folder, 0.4],
+							[folder, 0.5],
+							[folder, 0.6],
+							[folder, 0.7],
+							[folder, 0.8],
+							[folder, 0.9]]
+		images_to_show = []
+
+		try:
+			with concurrent.futures.ThreadPoolExecutor() as executor:
+				for result in executor.map(lambda p: image_preprocessor(*p), preprocess_threads):
+					# print(result)
+					images_to_show.append(result)
+					# print(test_folder_model[0])
+		except Exception as e:
+			print(str(e))
+
+		flattened_list = []
+
+		#flatten the lis
+		for x in images_to_show:
+			for y in x:
+				flattened_list.append(y)
+
+		csv_path = path + "CSV\\" + folder[:-7] + "CSV.csv"
+		write_to_file(csv_path, flattened_list)
 		#Creates a CSV file with the index of the most relevant frames that we want to include in our dataset
-		image_preprocessor(folder)
+		# image_preprocessor(folder)
 		#For the love of storage space, we remove the video file after splitting it into frames.
 		os.remove(valid_video_location)
 		print(str(int(url+1)) + " out of " + str(len(all_vids)) + " complete")

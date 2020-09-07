@@ -6,8 +6,10 @@ import os, os.path
 import random
 import numpy as np
 import keras
+import random
 from Functions import resizeImage
 
+os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 f = open("directory.txt", "r")
 path = f.read()
 
@@ -19,9 +21,11 @@ scored_data_folder = os.listdir(scored_data_name)
 train_folders_list = []
 test_folders_list = []
 
+rand_num = random.randint(0,5)
+
 #Loops through all possible subfolders, puts every 5th one into our testing set
 for folder in range(0,len(scored_data_folder)):
-    if folder % 5 != 4:
+    if folder % 5 != rand_num:
         train_folders_list.append(path + "\\Test Data\\" + scored_data_folder[folder])
     else:
         test_folders_list.append(path + "\\Test Data\\" + scored_data_folder[folder])
@@ -125,26 +129,39 @@ class_names = ['Golfer-Half', 'Golfer-Full', 'Blue/Grey Background', 'Green/Yell
 model = models.Sequential()
 #Convolutional layers are used for edge detection
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(height_px, width_px, 3), padding='same'))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
 #Dropout randomly turns off some parameters to help with overfitting
-model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 #MaxPooling divides both the height and width by 2, downscaling the image
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
 #Flatten converts it to a 1D array
 model.add(layers.Flatten())
 #16 node fully connected layer to the second to last layer
-model.add(layers.Dense(16, activation='relu'))
+model.add(layers.Dense(32, activation='relu'))
+model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
 #Output layer that has the same number of nodes as we have classes
 model.add(layers.Dense(5))
 #Gives information about the model printed on the screen
@@ -156,9 +173,9 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 #Checkpoint to save the best model so far
-checkpoint = tf.keras.callbacks.ModelCheckpoint('3_RE-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
+checkpoint = tf.keras.callbacks.ModelCheckpoint('5_RE-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
 
 #Trains the model
-model.fit(train_images, train_labels, batch_size=32, epochs=36, validation_data=(test_images, test_labels), callbacks=[checkpoint])
+model.fit(train_images, train_labels, batch_size=32, epochs=54, validation_data=(test_images, test_labels), callbacks=[checkpoint])
 
 test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)

@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import shutil
 import math
+import time
 import pandas as pd
 import PIL
 import string
@@ -39,59 +40,40 @@ def format_filename(s):
 
 # Method to preprocess a folder of images by creating a CSV with the index
 # of images we want to include in our dataset as the results of their similarity score
-def image_preprocessor(folder):
+def image_preprocessor(folder, start_prop):
+    time.sleep(start_prop)
     f = open("directory.txt", "r")
     path = f.read()
     img_folder = path + "CSV\\\\" + folder
 
     # Define the path that will contain the CSV of indices of the images that
     # are different based on their similarity score
-    csv_path = img_folder[:-7] + "CSV.csv"
-    print(csv_path)
+    # csv_path = img_folder[:-7] + "CSV.csv"
+    # print(csv_path)
     dst = path + "Test Data\\" + folder
-    try:
-        shutil.move(path + folder, path + "Test Data\\")
-    except:
-        shutil.rmtree(path + "Test Data\\" + folder)
-        shutil.move(path + folder, path + "Test Data\\")
-        # print("Already exists ")
+
+            # print("Already exists ")
     img_folder = os.listdir(dst)
     img_folder = sorted_alphanumeric(img_folder)
 
-
-    # Creates copies of all of our images into another folder for some reason
-    # try:
-    #     shutil.move(img_folder_path, dst)
-    # # Overwrites existing files, allows for possibility of making an additional copy
-    # except FileExistsError:
-    #     print("Folder " + dst + " already exists")
-    #     # decision = 0
-    #     decision = int(input("Enter 0 to overwrite and 1 to keep additional scored copies: "))
-    #     if decision == 0:
-    #         shutil.rmtree(dst)
-    #         shutil.move(img_folder_path, dst)
-    #     # print("Overwriting Data")
-    #     else:
-    #         dst += str(2)
-    #         shutil.copytree(img_folder_path, dst)
-    #         print("Copying Data")
+    starting_frame = math.floor(start_prop*len(img_folder))
+    ending_frame = math.floor((start_prop+0.1)*len(img_folder))
 
     # Loop counter
-    image = 0
+    image = starting_frame
     sim_score = 0
     sim_score_max = [0, 0]
     # Always shows the first image
-    images_to_show = [0]
-    flag = 0
+    images_to_show = [starting_frame]
 
     # Define which images to score
     # print("Preprocessing images ")
-    while image < len(img_folder) and flag == 0:
+    while image < ending_frame:
         file_path = dst + "\\" + img_folder[image]
         img_1 = cv2.imread(file_path)
         # Picks an image as a starting point, checks the next 50 images
         for x in range(1, 51):
-            if image + x < len(img_folder):
+            if image + x < ending_frame:
                 file_path_2 = dst + "\\" + img_folder[image + x]
                 img_2 = cv2.imread(file_path_2)
                 sim_score = similarity_Score(img_1, img_2)
@@ -101,8 +83,7 @@ def image_preprocessor(folder):
                     sim_score_max[1] = image + x
             # Makes sure we keep the last image, signals that we are done
             else:
-                sim_score_max[1] = len(img_folder) - 1
-                flag = 1
+                return images_to_show
         # Pulls the index of the most dissimilar images.
         # Continues the loop with that image as the base and checking the next 50 against it.
         image = sim_score_max[1]
@@ -110,7 +91,7 @@ def image_preprocessor(folder):
         print(str(sim_score_max[1]) + " out of " + str(len(img_folder) - 1) + " complete")
         sim_score_max = [0, 0]
 
-    write_to_file(csv_path, images_to_show)
+    # write_to_file(csv_path, images_to_show)
     # shutil.rmtree(dst)
 
 
@@ -263,9 +244,11 @@ def video_splitter(valid_video_location, folder, start_prop):
     cam = cv2.VideoCapture(valid_video_location)
     total_frames = cam.get(cv2.CAP_PROP_FRAME_COUNT)
     # frame
-    currentframe = 0
+    # currentframe = 0
     starting_frame = math.floor(start_prop*total_frames)
     ending_frame = math.floor((start_prop+0.1)*total_frames)
+
+    cam.set(cv2.CAP_PROP_POS_FRAMES, starting_frame)
 
     while True:
 
@@ -273,21 +256,23 @@ def video_splitter(valid_video_location, folder, start_prop):
         ret, frame = cam.read()
 
         if ret: 
-            if currentframe >= starting_frame and currentframe < ending_frame:
+            if starting_frame < ending_frame:
                 # if video is still left continue creating images
-                name = folder + "\\" + "frame" + str(int(1 + currentframe / 3)) + ".jpg"
+                name = folder + "\\" + "frame" + str(int(1 + starting_frame / 3)) + ".jpg"
 
-                if currentframe % 3 == 0:
-                    if currentframe % 300 == 0:
-                        os.system('cls')
+                if starting_frame % 3 == 0:
+                    if starting_frame % 300 == 0:
+                        # os.system('cls')
                         print('Creating...' + name)
                     # writing the extracted images
                     cv2.imwrite(name, frame)
 
             # increasing counter so that it will
             # show how many frames are created
-            currentframe += 1
+                starting_frame += 1
 
+            else:
+                break
         else:
             break
 

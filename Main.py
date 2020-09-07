@@ -37,7 +37,7 @@ f = open("directory.txt", "r")
 path = f.read()
 
 # defines the model we use for our Neural Network
-my_model = path + "3_RE-test-model-034.h5"
+my_model = path + "4_RE-test-model-027.h5"
 reconstructed_model = tf.keras.models.load_model(my_model)
 
 # gets all our tools to run the OCR
@@ -52,7 +52,7 @@ while done == False:
     golfer = input("Input the last name of a golfer you would like to watch. "
                    "Input '0' when you have listed all golfers you want to watch: ")
     if golfer != '0':
-        golfer = golfer.upper()
+        golfer = golfer.upper() + '\n'
         #is golfer they want to see in active golfer list?
         if golfer in active_golfers:
             golfer_list.append(golfer[:-1])

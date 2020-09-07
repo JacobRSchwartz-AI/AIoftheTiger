@@ -17,9 +17,7 @@ os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 f = open("directory.txt", "r")
 path = f.read()
 
-
-
-folder_name = "2008_U.S._Open_Final_Round_-_Full_Telecast-Vvi_LtvptKs Folder"
+folder_name = "Tiger_Woods_Extended_Highlights_From_Round_1_At_The_Northern_Trust_2020-gfna-rhpdJI Folder"
 dst = path + "Test Data\\\\" + folder_name
 folder = os.listdir(dst)
 folder = sorted_alphanumeric(folder)
