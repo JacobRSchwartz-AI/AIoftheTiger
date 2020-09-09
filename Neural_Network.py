@@ -21,7 +21,7 @@ scored_data_folder = os.listdir(scored_data_name)
 train_folders_list = []
 test_folders_list = []
 
-rand_num = random.randint(0,5)
+rand_num = random.randint(0,4)
 
 #Loops through all possible subfolders, puts every 5th one into our testing set
 for folder in range(0,len(scored_data_folder)):
@@ -103,9 +103,6 @@ for folder in range(0,len(test_folders_list)):
 
 
 
-
-
-
 # Normalize pixel values to be between 0 and 1, creates class names
 train_images, test_images = train_images / 255.0, test_images / 255.0
 class_names = ['Golfer-Half', 'Golfer-Full', 'Blue/Grey Background', 'Green/Yellow Background', 'Box top']
@@ -125,45 +122,34 @@ class_names = ['Golfer-Half', 'Golfer-Full', 'Blue/Grey Background', 'Green/Yell
 #     plt.xlabel(class_names[train_labels[i][0]])
 # plt.show()
 
+num_filters = 32
+filter_size = (3,3)
+max_pool = (2,2)
+conv_dropout = 0.1
+dense_dropout = 0.5
+
 #Creates a model using tensorflow and keras
 model = models.Sequential()
 #Convolutional layers are used for edge detection
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(height_px, width_px, 3), padding='same'))
-#Dropout randomly turns off some parameters to help with overfitting
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-#MaxPooling divides both the height and width by 2, downscaling the image
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
-model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(layers.Dropout(0.1, noise_shape=None, seed=None))
+model.add(layers.Conv2D(num_filters, filter_size, activation='relu', input_shape=(height_px, width_px, 3), padding='same'))
+
+
+for x in range(0,4):
+    for y in range(0,4):
+        if y%2 == 0:
+            model.add(layers.Dropout(conv_dropout, noise_shape=None, seed=None))
+        model.add(layers.Conv2D(num_filters, filter_size, activation='relu', padding='same'))
+    if x != 3:
+        model.add(layers.MaxPooling2D(max_pool))
+
 #Flatten converts it to a 1D array
 model.add(layers.Flatten())
 #16 node fully connected layer to the second to last layer
-model.add(layers.Dense(32, activation='relu'))
-model.add(layers.Dropout(0.5, noise_shape=None, seed=None))
+
+model.add(layers.Dense(num_filters, activation='relu'))
+model.add(layers.Dropout(dense_dropout, noise_shape=None, seed=None))
 #Output layer that has the same number of nodes as we have classes
-model.add(layers.Dense(5))
+model.add(layers.Dense(len(class_names)))
 #Gives information about the model printed on the screen
 model.summary()
 
@@ -173,7 +159,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 #Checkpoint to save the best model so far
-checkpoint = tf.keras.callbacks.ModelCheckpoint('5_RE-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
+checkpoint = tf.keras.callbacks.ModelCheckpoint('6_RE-test-model-{epoch:03d}.h5', verbose=1, monitor='val_accuracy',save_best_only=True, mode='auto')
 
 #Trains the model
 model.fit(train_images, train_labels, batch_size=32, epochs=54, validation_data=(test_images, test_labels), callbacks=[checkpoint])

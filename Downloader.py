@@ -20,7 +20,7 @@ path = f.read()
 #List of all videos to download from the internet
 all_vids = [
            
-            "https://www.youtube.com/watch?v=Vvi_LtvptKs&ab_channel=UnitedStatesGolfAssociation%28USGA%29",
+            "https://www.youtube.com/watch?v=UtbO01lyZTw&frags=wn&ab_channel=PGATOUR",
 			
             ]
 

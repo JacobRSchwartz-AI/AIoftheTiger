@@ -91,8 +91,7 @@ while True:
         # time.sleep(5)
         driver.get_screenshot_as_file(fileName)
         try:
-            result = image_analyzer(path + fileName, reconstructed_model, stop_token, creds, golfer_list, drive_service,
-                                    doc_service, driver)
+            result = image_analyzer(path + fileName, reconstructed_model, stop_token, creds, golfer_list, drive_service, doc_service, driver)
         except Exception as e:
             print(str(e))
         # os.system('cls')
