@@ -11,6 +11,17 @@ from Golfer_List import get_active_golfer_list
 import keyboard
 from tensorflow.keras import datasets, layers, models, optimizers, callbacks
 
+<<<<<<< Updated upstream
+=======
+# new stuff to close out program after a button press
+from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
+from pynput.mouse import Listener
+import pynput 
+import sys
+
+# Method to monitor keyboard presses so that we can add functionality to
+# pause, play, fastfoward, and rewind the video
+>>>>>>> Stashed changes
 def keyboard_monitoring(driver):
     while True:
         try:
@@ -31,8 +42,13 @@ def keyboard_monitoring(driver):
         except:
             continue
 
+<<<<<<< Updated upstream
 
 os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
+=======
+# change directory 
+# os.chdir(r"C:\Users\HP\Documents\AIoftheTiger New")
+>>>>>>> Stashed changes
 f = open("directory.txt", "r")
 path = f.read()
 
@@ -52,7 +68,11 @@ while done == False:
     golfer = input("Input the last name of a golfer you would like to watch. "
                    "Input '0' when you have listed all golfers you want to watch: ")
     if golfer != '0':
+<<<<<<< Updated upstream
         golfer = golfer.upper() + '\n'
+=======
+        golfer = golfer.upper() + "\n"
+>>>>>>> Stashed changes
         #is golfer they want to see in active golfer list?
         if golfer in active_golfers:
             golfer_list.append(golfer[:-1])
@@ -71,7 +91,86 @@ while done == False:
         done = True
 
 # url = "https://www.youtube.com/watch?v=-dlgPrBYcuY"
+<<<<<<< Updated upstream
 driver = webdriver.Chrome(ChromeDriverManager().install())
+=======
+
+# added
+b = webdriver.Chrome(ChromeDriverManager().install())
+b.maximize_window()
+b.get(url)
+
+
+# import httplib.client
+import socket
+
+from selenium.webdriver.remote.command import Command
+
+def get_status(driver):
+    try:
+        driver.execute(Command.STATUS)
+        return "Alive"
+    except: #(socket.error, httplib.client.CannotSendRequest):
+        return "Dead"
+print(get_status(b))
+b.quit()
+print(get_status(b))
+
+class EventListeners(AbstractEventListener):
+    def after_close(self, driver):
+        sys.exit()
+
+    def after_quit(self, driver):
+        sys.exit()
+
+    # def before_navigate_to(self, url, driver):
+    #     print("before_navigate_to %s" % url)
+
+    # def after_navigate_to(self, url, driver):
+    #     print("after_navigate_to %s" % url)
+
+    # def before_click(self, element, driver):
+    #     print("before_click %s" % element)
+
+    # def after_click(self, element, driver):
+    #     print("after_click %s" %element)
+
+    # def after_navigate_forward(self, driver):
+    #     print("after_navigate_forward");
+
+    # def before_navigate_forward(self, driver):
+    #     print("before_navigate_forward")
+
+    # def after_navigate_back(self, driver):
+    #     print("after_navigate_back")
+
+    # def before_navigate_back(self, driver):
+    #     print("before_navigate_back")
+
+    # def before_change_value_of(self, element, driver):
+    #     print("before_change_value_of")
+
+driver = EventFiringWebDriver(b,EventListeners())
+
+# d.get('https://www.cnn.com')
+# d.implicitly_wait(20)
+# d.get('https://www.google.de')
+# d.implicitly_wait(20)
+# d.back()
+
+def on_click(x, y, button, pressed):
+    if pressed:
+        print('Mouse clicked')
+        time.sleep(2)
+        print("Navigation to: %s " % b.current_url)
+
+with Listener(on_click=on_click) as listener:
+    listener.join()
+
+
+# Create a driver for Google Chrome Browser and open a webpage with the provided url 
+# driver = webdriver.Chrome(ChromeDriverManager().install())
+>>>>>>> Stashed changes
 driver.get(url)
 # driver.maximize_window()
 driver.fullscreen_window()
@@ -87,6 +186,13 @@ lag_time = 0
 # paused = False
 
 while True:
+<<<<<<< Updated upstream
+=======
+
+    
+    # get a screenshot of the video on the screen
+    driver.get_screenshot_as_file(fileName)
+>>>>>>> Stashed changes
     try:
         # time.sleep(5)
         driver.get_screenshot_as_file(fileName)
