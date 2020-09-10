@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import os
 
-os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
+# os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 f = open("directory.txt", "r")
 path = f.read()
 filepath = path + r'default_golfer_list.txt'
