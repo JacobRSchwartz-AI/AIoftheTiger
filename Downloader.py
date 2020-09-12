@@ -13,7 +13,7 @@ from moviepy.editor import VideoFileClip
 
 ydl_opts = {}
 
-os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
+# os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 f = open("directory.txt", "r")
 path = f.read()
 
@@ -24,25 +24,30 @@ all_vids = [
 			
             ]
 
+# index of all_vids we are currently in
+url_index = 0
 #Not sure what this does, but its using the youtube_dl library the way the tutorial did
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 	#Loops through every url in the list
-	for url in range(0,len(all_vids)):
-		#Downloads the video
-		ydl.download([all_vids[url]])
+	for url in all_vids:
+		Downloads the video
+		ydl.download([url])
 
 		#Extracts file info so that we can know the name of the file and can do stuff with it immediately.
-		file_info = ydl.extract_info(all_vids[url])
+		file_info = ydl.extract_info(url)
 		file_name = file_info['title'] + '-' + file_info['id'] + '.mkv'
 
 		#Converts the file name from the file_info into a list
 		file_name = list(file_name)
 		#Loops through every character in the list and copies the changes that the library makes to the filename
-		for char in range(0,len(file_name)):
-			if file_name[char] == "|" or file_name[char] == "/":
-				file_name[char] = "_"			
-			elif file_name[char] == ":":
-				file_name[char] = " -"
+		index = 0
+		for char in file_name:
+			if char == "|" or char == "/":
+				file_name[index] = "_"			
+			elif char == ":":
+				file_name[index] = " -"
+			
+			index += 1
 
 		# Change the list back to string, by using 'join' method of strings. 
 		file_name = "".join(file_name)
@@ -140,12 +145,9 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 			for y in x:
 				flattened_list.append(y)
 
-		csv_path = path + "CSV\\" + folder[:-7] + "CSV.csv"
-		write_to_file(csv_path, flattened_list)
-		#Creates a CSV file with the index of the most relevant frames that we want to include in our dataset
-		# image_preprocessor(folder)
-		#For the love of storage space, we remove the video file after splitting it into frames.
+		# For the love of storage space, we remove the video file after splitting it into frames.
 		os.remove(valid_video_location)
-		print(str(int(url+1)) + " out of " + str(len(all_vids)) + " complete")
+		print(str(int(url_index + 1)) + " out of " + str(len(all_vids)) + " complete")
+		url_index += 1
 
 
