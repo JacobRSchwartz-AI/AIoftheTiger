@@ -50,8 +50,11 @@ def keyboard_monitoring(driver):
         except:
             continue
 
+<<<<<<< Updated upstream
 
 # change directory 
+=======
+>>>>>>> Stashed changes
 f = open("directory.txt", "r")
 path = f.read()
 

@@ -14,7 +14,7 @@ import concurrent.futures
 from queue import Queue
 from Functions import sorted_alphanumeric, resizeImage
 from OCR import main_ocr, prepare_ocr
-from Screenshot_Tool import screenshot_from_url
+
 
 
 # Method to get our Neural Network to only run our OCR tool on images

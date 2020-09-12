@@ -7,7 +7,7 @@ import shutil
 import math
 import time
 import concurrent.futures
-from Functions import format_filename, video_splitter, image_preprocessor, write_to_file
+from Functions import format_filename, video_splitter, write_to_file
 from moviepy.editor import VideoFileClip
 
 
@@ -20,7 +20,8 @@ path = f.read()
 #List of all videos to download from the internet
 all_vids = [
            
-            "https://www.youtube.com/watch?v=UtbO01lyZTw&frags=wn&ab_channel=PGATOUR",
+            "https://www.youtube.com/watch?v=nZZimyGEmRI&ab_channel=EuropeanTour",
+			"https://www.youtube.com/watch?v=OfOjNNG2LaM&ab_channel=EuropeanTour"
 			
             ]
 
@@ -66,11 +67,7 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		#creates folder for output with split out images
 		folder = valid_video_location[:-4] + ' Folder'
 		# clip = VideoFileClip(valid_video_location)
-		# length = clip.duration
-		# print(length)
-		# fps = cam.get(cv2.CAP_PROP_FPS)
-		# print(fps)
-		# total_frames = math.floor(fps*length)
+		
 		
 		cam = cv2.VideoCapture(valid_video_location)
 		total_frames = cam.get(cv2.CAP_PROP_FRAME_COUNT)	
@@ -105,47 +102,12 @@ with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 		folder = valid_file_name[:-4] + ' Folder'
 		#Initializes a new name of a folder that does not contain the entire path because the entire path is added in the function itself.
 		try:
-			shutil.move(path + folder, path + "Test Data\\")
+			shutil.move(path + folder, path + "Data\\Unscored Data")
 		except:
-			shutil.rmtree(path + "Test Data\\" + folder)
-			shutil.move(path + folder, path + "Test Data\\")
+			shutil.rmtree(path + "Data\\\\Unscored Data" + folder)
+			shutil.move(path + folder, path + "Data\\Unscored Data")
 		
 
-
-		preprocess_threads = [[folder, 0],
-							[folder, 0.1],
-							[folder, 0.2],
-							[folder, 0.3],
-							[folder, 0.4],
-							[folder, 0.5],
-							[folder, 0.6],
-							[folder, 0.7],
-							[folder, 0.8],
-							[folder, 0.9]]
-		images_to_show = []
-
-		try:
-			with concurrent.futures.ThreadPoolExecutor() as executor:
-				for result in executor.map(lambda p: image_preprocessor(*p), preprocess_threads):
-					# print(result)
-					images_to_show.append(result)
-					# print(test_folder_model[0])
-		except Exception as e:
-			print(str(e))
-
-		flattened_list = []
-
-		#flatten the lis
-		for x in images_to_show:
-			for y in x:
-				flattened_list.append(y)
-
-		csv_path = path + "CSV\\" + folder[:-7] + "CSV.csv"
-		write_to_file(csv_path, flattened_list)
-		#Creates a CSV file with the index of the most relevant frames that we want to include in our dataset
-		# image_preprocessor(folder)
-		#For the love of storage space, we remove the video file after splitting it into frames.
 		os.remove(valid_video_location)
+
 		print(str(int(url+1)) + " out of " + str(len(all_vids)) + " complete")
-
-
