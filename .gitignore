@@ -7,8 +7,6 @@
 /__pycache__
 /.idea
 credentials.json
-directory.txt
-requirements.txt
 *.zip
 /Scored Data
 /Test Data
