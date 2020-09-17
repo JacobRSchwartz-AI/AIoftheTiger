@@ -29,7 +29,7 @@ all_vids = [
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 	#Loops through every url in the list
 	for url in range(0,len(all_vids)):
-		#Downloads the video
+		#Downloads the videopd
 		ydl.download([all_vids[url]])
 
 		#Extracts file info so that we can know the name of the file and can do stuff with it immediately.

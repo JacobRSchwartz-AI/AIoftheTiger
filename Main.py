@@ -20,9 +20,9 @@ import sys
 # Method to determine if the user has closed their browser (driver) or not
 def get_status(driver):
     try:
-         status = driver.current_url
+        status = driver.current_url
     except:
-         status = None
+        status = None
 
     if status is None:
         print("The driver is empty")
@@ -50,16 +50,11 @@ def keyboard_monitoring(driver):
         except:
             continue
 
-<<<<<<< Updated upstream
-
-# change directory 
-=======
->>>>>>> Stashed changes
 f = open("directory.txt", "r")
 path = f.read()
 
 # defines the model we use for our Neural Network
-my_model = path + "4_RE-test-model-027.h5"
+my_model = path + "6_RE-test-model-029.h5"
 reconstructed_model = tf.keras.models.load_model(my_model)
 
 # gets all our tools to run the OCR
@@ -91,8 +86,6 @@ while done == False:
         continue
     else:
         done = True
-
-url = "https://www.youtube.com/watch?v=mg7netw1JuM"
 
 # added
 driver = webdriver.Chrome(ChromeDriverManager().install())

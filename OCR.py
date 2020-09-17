@@ -9,8 +9,6 @@ from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from googleapiclient import _auth
 from oauth2client import tools
 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\\HP\\Documents\\AIoftheTiger\\credentials (1).json"
-
 try:
     import argparse
 
@@ -77,8 +75,6 @@ def get_credentials():
 # need to get picture uploaded to the google drive, open with google docs and grab this info above (automate this process)
 def upload_to_drive(path, filename, creds=None, drive_service=None, doc_service=None):
     # # uploads a file to the root folder of the google drive
-    # file_id = deprecated_drive_service.upload_file('Test1IMG', 'C:\\Users\\HP\\Documents\\AI Frames\\TW3.jpg', "root",
-    #                                  mime_type='image/jpeg')
     #
     # print(file_id)
 
@@ -149,12 +145,7 @@ def find_golfer(output_txt, golfer_list):
 # grab the text and decipher if it contains "tiger woods" and similar phrases
 def main_ocr(path, filename, golfer_list, creds=None, drive_service=None, doc_service=None):
     # filename = 'frame50444'
-    # path = "C:\\Users\\manag\\PycharmProjects\\AIoftheTiger\\2008_U.S._Open_Final_Round_Full_Telecast-Vvi_LtvptKs Folder\\" + filename + '.jpg'
     output_txt = upload_to_drive(path, filename, creds, drive_service, doc_service)
     golfer = find_golfer(output_txt, golfer_list)
     return golfer
 
-# if __name__ == '__main__':
-#     os.chdir("C:\\Users\\HP\\Documents\\AIoftheTiger New\\")
-#     # prepare_ocr()
-#     main_ocr(r"C:\Users\HP\Documents\AI Frames\TW4.png","TW4.png")

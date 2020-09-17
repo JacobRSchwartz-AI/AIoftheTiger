@@ -8,8 +8,6 @@ import numpy as np
 import keras
 import random
 
-
-os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 f = open("directory.txt", "r")
 path = f.read()
 

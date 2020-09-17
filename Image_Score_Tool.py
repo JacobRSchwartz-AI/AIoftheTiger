@@ -21,11 +21,11 @@ def fun_directory_selector(request_string: str, selected_directory_list: list, s
 
 	if len(directory_path_string) > 0:
 		selected_directory_list.append(directory_path_string)
+		print(directory_path_string + " added to be scored")
 		fun_directory_selector('Select the next Directory or Cancel to end', selected_directory_list, os.path.dirname(directory_path_string))
 
 	return selected_directory_list
 
-os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
 root = Tk()
 root.withdraw()
 f = open("directory.txt", "r")
