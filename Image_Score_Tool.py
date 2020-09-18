@@ -28,8 +28,7 @@ def fun_directory_selector(request_string: str, selected_directory_list: list, s
 
 root = Tk()
 root.withdraw()
-f = open("directory.txt", "r")
-path = f.read()
+path = os.getcwd() + "\\"
 # folder_selected = filedialog.askdirectory()
 folders_selected = []
 fun_directory_selector("request string", folders_selected, path + "\\\\Data\\\\Unscored Data")

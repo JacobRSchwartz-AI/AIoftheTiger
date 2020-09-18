@@ -2,8 +2,7 @@
 # of images we want to include in our dataset as the results of their similarity score
 def image_preprocessor(folder, start_prop):
     time.sleep(start_prop)
-    f = open("directory.txt", "r")
-    path = f.read()
+    path = os.getcwd() + "\\"
     img_folder = path + "CSV\\\\" + folder
 
     # Define the path that will contain the CSV of indices of the images that

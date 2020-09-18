@@ -9,9 +9,7 @@ import Functions
 
 #When Program Starts
 init_time = time.time()
-
-f = open("directory.txt", "r")
-path = f.read()
+path = os.getcwd() + "\\"
 
 #Live stream of 1s and 0s every
 def record_data(dir,video,woods):

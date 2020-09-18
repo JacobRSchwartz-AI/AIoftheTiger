@@ -4,8 +4,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-f = open("directory.txt", "r")
-path = f.read()
+path = os.getcwd() + "\\"
 
 scored_data_path = path + "Data\\\\Scored Data"
 scored_data_folder = os.listdir(scored_data_path)

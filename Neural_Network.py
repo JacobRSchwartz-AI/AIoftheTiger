@@ -8,8 +8,7 @@ import numpy as np
 import keras
 import random
 
-f = open("directory.txt", "r")
-path = f.read()
+path = os.getcwd() + "\\"
 
 #Parent folder that contains subfolders with image data
 scored_data_name = path + "\\Data\\Scored Data"

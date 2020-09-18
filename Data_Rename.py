@@ -1,8 +1,7 @@
 import cv2
 import os
 
-f = open("directory.txt", "r")
-path = f.read()
+path = os.getcwd() + "\\"
 
 scored_data_name = path + "\\Test Data\\"
 scored_data_folder = os.listdir(scored_data_name)

@@ -14,8 +14,7 @@ from moviepy.editor import VideoFileClip
 ydl_opts = {}
 
 # os.chdir(r"C:\Users\manag\Documents\GitHub\AIoftheTiger")
-f = open("directory.txt", "r")
-path = f.read()
+path = os.getcwd() + "\\"
 
 #List of all videos to download from the internet
 all_vids = [

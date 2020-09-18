@@ -50,9 +50,8 @@ def keyboard_monitoring(driver):
         except:
             continue
 
-f = open("directory.txt", "r")
-path = f.read()
-
+path = os.getcwd() + "\\"
+print(path)
 # defines the model we use for our Neural Network
 my_model = path + "6_RE-test-model-029.h5"
 reconstructed_model = tf.keras.models.load_model(my_model)
