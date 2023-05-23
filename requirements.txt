@@ -10,7 +10,7 @@ playsound==1.2.2
 pynput==1.7.1
 webdriver_manager==3.2.1
 numpy==1.18.5
-requests==2.24.0
+requests==2.31.0
 selenium==3.141.0
 keyboard==0.13.5
 Keras==2.3.1
